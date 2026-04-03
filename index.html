@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon Budget Course — Simulateur karting</title>
+  <meta name="description" content="Estimez votre budget karting compétition ou loisir. Un outil gratuit conçu par des pilotes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Données embarquées — aucun serveur requis -->
+  <script src="data/data.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       BOUTON DARK MODE
+  ══════════════════════════════════════════════════════════ -->
+  <button id="theme-toggle" aria-label="Basculer le thème sombre / clair" title="Thème sombre / clair">
+    <span class="icon-sun">☀</span>
+    <span class="icon-moon">☾</span>
+  </button>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1 — LANDING
+  ══════════════════════════════════════════════════════════ -->
+  <section id="landing">
+
+    <!-- Hero background image (place img/hero.jpg dans le dossier img/) -->
+    <div class="landing-hero-bg">
+      <img src="img/hero.jpg" alt="" onerror="this.parentElement.classList.add('no-img')" />
+      <div class="landing-hero-overlay"></div>
+    </div>
+
+    <!-- Lignes de vitesse animées -->
+    <div class="speed-lines" aria-hidden="true">
+      <div class="sl sl-1"></div>
+      <div class="sl sl-2"></div>
+      <div class="sl sl-3"></div>
+      <div class="sl sl-4"></div>
+    </div>
+
+    <div class="landing-content">
+
+      <div class="landing-header">
+        <span class="landing-tag">Édition 2026 · Karting</span>
+        <h1>Mon Budget<br /><em>Course</em></h1>
+        <p class="landing-subtitle">Le simulateur de budget karting conçu par des pilotes, pour des pilotes.</p>
+      </div>
+
+      <div class="landing-pilots">
+        <div class="pilot-card">
+          <div class="pilot-avatar">
+            <img src="img/CG.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <div class="pilot-initial" style="display:none">CG</div>
+          </div>
+          <div class="pilot-info">
+            <strong>Clément Guet</strong>
+            <span>Pilote karting · Championnat de France 2025</span>
+          </div>
+        </div>
+        <div class="pilot-card">
+          <div class="pilot-avatar">
+            <img src="img/GM.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <div class="pilot-initial" style="display:none">GM</div>
+          </div>
+          <div class="pilot-info">
+            <strong>Guillaume Mas</strong>
+            <span>Lauréat d'un volant · Ligier &amp; 208 Cup</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-cta">
+        <button class="btn-primary" onclick="document.getElementById('simulator').scrollIntoView({behavior:'smooth'})">
+          Commencer la simulation karting
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <p class="cta-note">Gratuit · 100% local · Aucune donnée envoyée</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — SIMULATEUR
+  ══════════════════════════════════════════════════════════ -->
+  <section id="simulator">
+
+    <!-- Barre sticky avec budget en direct -->
+    <div id="budget-bar">
+      <div class="budget-bar-inner">
+        <span class="budget-bar-label">Budget estimé — Année 1</span>
+        <span id="budget-bar-amount" class="budget-bar-amount">— €</span>
+      </div>
+    </div>
+
+    <div class="simulator-layout">
+
+      <!-- Colonne questions -->
+      <div class="simulator-questions">
+        <div class="sim-header">
+          <h2>Simulation karting</h2>
+          <p class="sim-hint">Toutes les questions sont affichées. Modifiez vos réponses à tout moment — le budget se recalcule instantanément.</p>
+        </div>
+        <div id="questions-panel">
+          <!-- Questions générées par app.js -->
+          <div class="questions-loading">Chargement des questions…</div>
+        </div>
+      </div>
+
+      <!-- Colonne résultats -->
+      <div class="simulator-results">
+
+        <!-- Totaux -->
+        <div id="totals-panel" class="results-section results-totals">
+          <h3 class="results-title">Résumé</h3>
+          <div class="totals-grid">
+            <div class="total-row">
+              <span class="total-row-label">Investissement initial</span>
+              <span class="total-row-amount" id="total-invest">— €</span>
+            </div>
+            <div class="total-row">
+              <span class="total-row-label">Coûts annuels</span>
+              <span class="total-row-amount" id="total-annual">— €</span>
+            </div>
+            <div class="total-row total-row--grand">
+              <span class="total-row-label">Budget Année 1</span>
+              <span class="total-row-amount" id="total-grand">— €</span>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- Tableau pleine largeur -->
+    <div class="detail-fullwidth">
+      <div class="detail-fullwidth-inner">
+        <div id="detail-section" class="results-section">
+          <h3 class="results-title">Détail des dépenses</h3>
+          <div class="detail-table-wrapper">
+            <table id="detail-table">
+              <thead>
+                <tr>
+                  <th>Poste</th>
+                  <th>Description</th>
+                  <th class="col-type">Type</th>
+                  <th class="col-amount">Montant</th>
+                </tr>
+              </thead>
+              <tbody id="detail-tbody">
+                <tr class="table-empty">
+                  <td colspan="4">Répondez aux questions pour voir le détail des dépenses.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">* Les montants marqués « estimation » sont basés sur notre expérience et peuvent varier.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════ -->
+  <footer id="site-footer">
+    <p>Mon Budget Course — édition 2026 · Conçu par Clément Guet &amp; Guillaume Mas</p>
+    <p class="footer-note">Les estimations sont basées sur notre expérience personnelle et les prix observés en 2025–2026. Ce simulateur n'a pas de valeur contractuelle.</p>
+  </footer>
+
+  <!-- Tooltip global -->
+  <div id="tooltip" hidden role="tooltip"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

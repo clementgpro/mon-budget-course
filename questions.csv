@@ -1,0 +1,26 @@
+,,,,
+Question,Réponses,Identifiant Question,Condition,Pré-remplissage
+Arrivée sur le questionnaire,"Je n'y connais pas grand chose, fais moi une simulation la moins chère
+Je m'y connais un peu mais guide moi
+Je souhaite tout personnaliser",profil,,
+Quel âge as-tu ?,Composant moderne pour le choix,age,,
+Quel est ton budget ?,"Economique, Premium, Personnalisé",budget,,profil(noob)=economique
+Loisir / compétition ?,"Loisir, Compétition",pratique,,
+Quel catégorie ?,"Mini 60 (8-12 ans), Nationale (12-17 ans), Senior (14 ans +), Master (32 ans+), KZ2",categorie,,selon âge
+"Quel ""périmètre"" ?","Régional, National (à venir), International (à venir)",perimetre,,budget(economique)=régional
+Combien de sprint par mois ?,Composant moderne pour le choix,nb_courses_loisir,pratique=loisir,
+Combien d'endurance par mois ?,"Composant pour sélectionner la durée de l'endurance (2H, 4h, 6H, 12H, 24H) + le nombre associé",,pratique=loisir,
+Combien de courses ?,"Combien pour les courses clubs, combien pour la ligue (4 par défaut)",nb_courses_regional,perimetre=regional,
+As-tu déjà un karting ?,"Oui, Non",karting,,
+Comment vas-tu transporter ton matériel ?,"Remorque, plateau, j'ai déjà ce qu'il faut",,,
+Où vas-tu stocker ton karting ?,Gardiennage dans un box sur circuit / Je le garde chez moi,,,
+As-tu déjà un chariot ?,"Oui, Non",,,
+As-tu déjà les outils ?,,,,
+As-tu une préférence pour la marque du chassis ?,"Sodikart, CRG, Tony Kart",chassis_marque,karting=non,
+As-tu déjà un casque ?,"Oui, Non",,,
+As-tu déjà une combinaison ?,"Oui, Non",,,
+As-tu déjà des gants ?,"Oui, Non",,,
+As-tu déjà un manomètre ?,"Oui, Non",,,
+As-tu déjà un gonfleur ?,"Oui, Non",,,
+Qui s'occupe de ta mécanique les jours de course ?,Je fais tout moi-même / J'ai un ami mécano (bénévole) / Je paie un mécanicien officiel,,,
+Prévois-tu de dormir sur place lors des week-ends de courses ?,Oui à l'hôtel / Non je rentre chez moi / Je dors dans le paddock (camion / tente),,,
