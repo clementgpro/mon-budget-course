@@ -52,7 +52,7 @@
       <div class="landing-pilots">
         <div class="pilot-card">
           <div class="pilot-avatar">
-            <img src="img/CG.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <img src="img/cg.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
             <div class="pilot-initial" style="display:none">CG</div>
           </div>
           <div class="pilot-info">
@@ -62,7 +62,7 @@
         </div>
         <div class="pilot-card">
           <div class="pilot-avatar">
-            <img src="img/GM.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <img src="img/gm.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
             <div class="pilot-initial" style="display:none">GM</div>
           </div>
           <div class="pilot-info">
@@ -80,6 +80,7 @@
           </svg>
         </button>
         <p class="cta-note">Gratuit · 100% local · Aucune donnée envoyée</p>
+        <a href="about.html" class="cta-about-link">En savoir plus sur le projet →</a>
       </div>
 
     </div>
@@ -90,11 +91,24 @@
   ══════════════════════════════════════════════════════════ -->
   <section id="simulator">
 
+    <!-- Lignes de vitesse décoratives -->
+    <div class="speed-lines sim-speed-lines" aria-hidden="true">
+      <div class="sl sl-5"></div>
+      <div class="sl sl-6"></div>
+      <div class="sl sl-7"></div>
+    </div>
+
     <!-- Barre sticky avec budget en direct -->
-    <div id="budget-bar">
+    <div id="budget-bar" class="budget-bar--pending">
       <div class="budget-bar-inner">
-        <span class="budget-bar-label">Budget estimé — Année 1</span>
-        <span id="budget-bar-amount" class="budget-bar-amount">— €</span>
+        <div class="gamme-toggle" id="gamme-toggle" aria-label="Choisir la gamme">
+          <button type="button" class="gamme-btn" data-gamme="economique">Économique</button>
+          <button type="button" class="gamme-btn" data-gamme="premium">Premium</button>
+        </div>
+        <div class="budget-bar-right">
+          <span class="budget-bar-label">Budget estimé — Année 1</span>
+          <span id="budget-bar-amount" class="budget-bar-amount">— €</span>
+        </div>
       </div>
     </div>
 
@@ -104,42 +118,32 @@
       <div class="simulator-questions">
         <div class="sim-header">
           <h2>Simulation karting</h2>
-          <p class="sim-hint">Toutes les questions sont affichées. Modifiez vos réponses à tout moment — le budget se recalcule instantanément.</p>
+          <p class="sim-hint">Réponds aux questions ci-dessous, une par une. Clique sur <strong>Calculer mon budget</strong> une fois toutes les questions complétées.</p>
         </div>
         <div id="questions-panel">
           <!-- Questions générées par app.js -->
           <div class="questions-loading">Chargement des questions…</div>
         </div>
-      </div>
 
-      <!-- Colonne résultats -->
-      <div class="simulator-results">
-
-        <!-- Totaux -->
-        <div id="totals-panel" class="results-section results-totals">
-          <h3 class="results-title">Résumé</h3>
-          <div class="totals-grid">
-            <div class="total-row">
-              <span class="total-row-label">Investissement initial</span>
-              <span class="total-row-amount" id="total-invest">— €</span>
-            </div>
-            <div class="total-row">
-              <span class="total-row-label">Coûts annuels</span>
-              <span class="total-row-amount" id="total-annual">— €</span>
-            </div>
-            <div class="total-row total-row--grand">
-              <span class="total-row-label">Budget Année 1</span>
-              <span class="total-row-amount" id="total-grand">— €</span>
-            </div>
+        <!-- Bouton calcul + barre de progression -->
+        <div class="calculate-wrap" id="calculate-wrap">
+          <div class="calculate-progress">
+            <div class="calculate-progress-fill" id="calculate-progress-fill"></div>
           </div>
+          <p class="calculate-progress-text" id="calculate-progress-text">Commence par répondre à la première question</p>
+          <button class="btn-calculate" id="btn-calculate" disabled>
+            Calculer mon budget
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M9 3v12M4 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
-
-
       </div>
+
     </div>
 
     <!-- Tableau pleine largeur -->
-    <div class="detail-fullwidth">
+    <div class="detail-fullwidth detail-hidden">
       <div class="detail-fullwidth-inner">
         <div id="detail-section" class="results-section">
           <h3 class="results-title">Détail des dépenses</h3>
@@ -171,12 +175,40 @@
        FOOTER
   ══════════════════════════════════════════════════════════ -->
   <footer id="site-footer">
+    <div class="footer-links">
+      <a href="index.html" class="footer-link footer-link--active">Simulateur</a>
+      <span class="footer-sep">·</span>
+      <a href="about.html" class="footer-link">À propos</a>
+    </div>
     <p>Mon Budget Course — édition 2026 · Conçu par Clément Guet &amp; Guillaume Mas</p>
     <p class="footer-note">Les estimations sont basées sur notre expérience personnelle et les prix observés en 2025–2026. Ce simulateur n'a pas de valeur contractuelle.</p>
   </footer>
 
   <!-- Tooltip global -->
   <div id="tooltip" hidden role="tooltip"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODALE DON
+  ══════════════════════════════════════════════════════════ -->
+  <div id="donation-overlay" class="donation-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="donation-title">
+    <div class="donation-modal">
+      <button class="donation-close" id="donation-close" aria-label="Fermer">&#x2715;</button>
+      <div class="donation-flag">🏁</div>
+      <h2 class="donation-title" id="donation-title">Cet outil est <em>gratuit</em><br>grâce à Clément &amp; Guillaume</h2>
+      <p class="donation-body">Ils ont collecté ces données en participant eux-mêmes aux championnats. Ce simulateur repose sur leur travail bénévole — parce que le milieu du sport auto mérite plus de transparence.</p>
+      <div class="donation-amount-block">
+        <div class="donation-amount" id="donation-amount">—</div>
+        <div class="donation-amount-desc">soit 1% de votre budget simulé · l'équivalent d'un plein d'essence</div>
+      </div>
+      <div class="donation-btns">
+        <a href="https://www.paypal.me/PLACEHOLDER" target="_blank" rel="noopener noreferrer" class="btn-donate" id="btn-donate">
+          Soutenir la saison
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="btn-donate-skip" id="donation-skip">Non merci, continuer</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

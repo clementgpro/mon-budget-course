@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>À propos — Mon Budget Course</title>
+  <meta name="description" content="La genèse de Mon Budget Course : le premier simulateur de budget karting et sport auto conçu par des pilotes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Applique le thème avant le rendu pour éviter le flash
+    (function () {
+      if (localStorage.getItem('mbc-theme') === 'dark') {
+        document.documentElement.classList.add('dark-preload');
+        document.addEventListener('DOMContentLoaded', function () {
+          document.documentElement.classList.remove('dark-preload');
+          document.body.classList.add('dark');
+        });
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       BOUTONS FLOTTANTS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-top-bar">
+    <a href="index.html" class="about-back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retour au simulateur
+    </a>
+    <button id="theme-toggle" aria-label="Basculer le thème sombre / clair" title="Thème sombre / clair">
+      <span class="icon-sun">☀</span>
+      <span class="icon-moon">☾</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════ -->
+  <section id="about-hero">
+
+    <!-- Lignes de vitesse animées -->
+    <div class="speed-lines" aria-hidden="true">
+      <div class="sl sl-1"></div>
+      <div class="sl sl-2"></div>
+      <div class="sl sl-3"></div>
+      <div class="sl sl-4"></div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="landing-hero-overlay" style="background: linear-gradient(to bottom, transparent 0%, var(--bg) 90%)"></div>
+
+    <div class="about-hero-content">
+      <span class="about-hero-tag">Édition 2026 · Notre histoire</span>
+      <h1>À<br /><em>propos</em></h1>
+      <p class="about-hero-sub">Le premier simulateur de budget karting conçu par des pilotes qui connaissent les vrais chiffres, de l’intérieur.</p>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       GENÈSE DU PROJET
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-section">
+    <div class="about-section-tag">Pourquoi ce projet</div>
+    <h2>La frustration<br />qui a tout déclenché</h2>
+    <p>
+      Quand on commence en karting — ou qu'on veut y revenir — la première question est toujours la même :
+      <strong>« Ça coûte combien, vraiment ? »</strong>
+    </p>
+    <p>
+      Et la réponse honnête, personne ne la donne. Les forums sont vagues, les concessions intéressées, les teams peu bavards.
+      Le milieu du sport automobile est réputé pour être fermé, surtout quand il s'agit de parler budget.
+    </p>
+    <p>
+      Résultat : les novices ne savent pas vers quelle catégorie s'orienter, et même les pilotes expérimentés
+      passent des heures à additionner des lignes Excel pour estimer leur prochaine saison. <em>Il n'existe aucun outil qui regroupe tout ça.</em>
+    </p>
+    <p>
+      Mon Budget Course est né de cette frustration. Pas pour en faire un business — pour que l'info existe, enfin, librement.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LES CRÉATEURS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-section">
+    <div class="about-section-tag">Les créateurs</div>
+    <h2>Deux pilotes,<br />deux carnets de chèques</h2>
+    <p>
+      Ce simulateur ne sort pas d'un bureau. Les données ont été collectées sur le terrain : factures, devis confidentiels,
+      inscriptions payées, pneus usés, nuits d'hôtel en bord de circuit.
+    </p>
+
+    <div class="about-pilots">
+
+      <div class="about-pilot-card">
+        <div class="about-pilot-avatar">
+          <img src="img/CG.jpg" alt="Clément Guet"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="about-pilot-initial" style="display:none">CG</div>
+        </div>
+        <div class="about-pilot-name">Clément Guet</div>
+        <div class="about-pilot-role">Pilote karting<br />Championnat de France 2025 · Ligue BPL</div>
+      </div>
+
+      <div class="about-pilot-card">
+        <div class="about-pilot-avatar">
+          <img src="img/GM.jpg" alt="Guillaume Mas"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="about-pilot-initial" style="display:none">GM</div>
+        </div>
+        <div class="about-pilot-name">Guillaume Mas</div>
+        <div class="about-pilot-role">Lauréat d'un volant<br />Ligier JS2 R · 208 Rally Cup</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       NOTRE APPROCHE
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-section">
+    <div class="about-section-tag">Notre approche</div>
+    <h2>Des données réelles,<br />pas des estimations</h2>
+
+    <div class="about-items">
+
+      <div class="about-item" style="--item-index: 0">
+        <div class="about-item-icon">🏁</div>
+        <div class="about-item-body">
+          <h3>Données vécues</h3>
+          <p>Chaque chiffre provient d'une facture réelle, d'un devis reçu, ou d'un tarif observé sur circuit. Pas Wikipedia, pas une estimation au doigt mouillé.</p>
+        </div>
+      </div>
+
+      <div class="about-item" style="--item-index: 1">
+        <div class="about-item-icon">🔗</div>
+        <div class="about-item-body">
+          <h3>Réseau de pilotes</h3>
+          <p>Avoir un pied dans le milieu change tout. Nos prix incluent des devis confidentiels de teams, des tarifs mécanicien négociés, et des retours de pilotes qui ont fait les frais des vrais coûts.</p>
+        </div>
+      </div>
+
+      <div class="about-item" style="--item-index: 2">
+        <div class="about-item-icon">🔓</div>
+        <div class="about-item-body">
+          <h3>Gratuit & transparent</h3>
+          <p>Aucune donnée n'est envoyée. Tout tourne en local dans votre navigateur. Le simulateur est et restera gratuit — parce que l'accès à l'information sur le sport auto ne devrait pas être un privilège.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════ -->
+  <footer id="site-footer">
+    <div class="footer-links">
+      <a href="index.html" class="footer-link">Simulateur</a>
+      <span class="footer-sep">·</span>
+      <a href="about.html" class="footer-link footer-link--active">À propos</a>
+    </div>
+    <p>Mon Budget Course — édition 2026 · Conçu par Clément Guet &amp; Guillaume Mas</p>
+    <p class="footer-note">Les estimations sont basées sur notre expérience personnelle et les prix observés en 2025–2026. Ce simulateur n'a pas de valeur contractuelle.</p>
+  </footer>
+
+  <script>
+    // Dark mode toggle for about page
+    (function () {
+      var saved = localStorage.getItem('mbc-theme');
+      if (saved === 'dark') document.body.classList.add('dark');
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var btn = document.getElementById('theme-toggle');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('mbc-theme', isDark ? 'dark' : 'light');
+          });
+        }
+
+        // IntersectionObserver for about sections
+        if ('IntersectionObserver' in window) {
+          document.querySelectorAll('.about-section').forEach(function (section) {
+            var obs = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('section-visible');
+                  obs.unobserve(entry.target);
+                }
+              });
+            }, { threshold: 0.12 });
+            obs.observe(section);
+          });
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

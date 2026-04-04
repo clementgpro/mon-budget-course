@@ -1,42 +1,52 @@
-key,Catégorie,Sous-catégorie,Gamme,Description,Prix (€),Source
-karting_neuf_haut,Matériel,,Haut de gamme,Karting SODIKART NEUF PRÊT À ROULER,8500,Prix public
-karting_neuf_occasion_haut,Matériel,,Haut de gamme,"Karting quasi-neuf (2h de roulage) de la finale mondiale",6600,"Devis des teams (GKart53, Itakashop…)"
-karting_occasion,Matériel,,Basique,Karting d'occasion chez un revendeur spécialisé,3000,Prix observé chez revendeur spécialisé
-chariot_basic,Matériel,Transport,Basique,Chariot kart MEKAONE,199.90,https://www.itakashop.com/fr/chariots-kart/10591-chariot-kart-mekaone.html
-chariot_premium,Matériel,Transport,Haut de gamme,Chariot kart basculant MEKAONE,379.90,https://www.itakashop.com/fr/chariots-kart/9882-chariot-kart-basculant-mekaone.html
-transport_plateau,Matériel,Transport,Basique,Plateau simple (Le Bon Coin),200,Le Bon Coin
-transport_remorque,Matériel,Transport,Haut de gamme,Remorque,1000,
-stockage_box_basic,Logistique,,Basique,Gardiennage à l'année — petit box sur circuit (mensuel),45,Facture confidentielle
-stockage_box_premium,Logistique,,Haut de gamme,Gardiennage à l'année — grand box sur circuit (mensuel),55,Facture confidentielle
-droit_piste,Services,,Standard,Droit de piste à l'année,300,
-licence_ffsa,Administratif,,Basique,Licence FFSA,200,Estimation
-revision_annuelle,Matériel,Maintenance,Haut de gamme,Révision annuelle complète (compétition),990,Devis confidentiel
-casque_basic,Équipement,,Basique,Casque ZAMP RZ-38,329,https://www.itakashop.com/fr/casques-competition/13553-7534-casque-zamp-rz-38-xs.html
-casque_premium,Équipement,,Haut de gamme,Casque BELL RS7-K,744,https://www.itakashop.com/fr/casques-competition/13293-7340-casque-bell-rs7-k-fia-8878-2024.html
-combinaison_basic,Équipement,,Basique,Combinaison BOX'S BKX Grise,179,https://www.itakashop.com/fr/combinaisons-homologuees-fia/13060-7058-combinaison-boxs-bkx-grise.html
-combinaison_premium,Équipement,,Haut de gamme,Combinaison officielle SODI OMP,519,https://www.itakashop.com/fr/combinaisons-homologuees-fia/12894-6937-combinaison-officielle-sodi-omp.html
-gants_basic,Équipement,,Basique,Gants Alpinestars Tech 1-K Race V2 Pure,44.95,https://www.itakashop.com/fr/gants/13244-7254-gants-alpinestars-tech-1-k-race-v2-pure.html
-gants_premium,Équipement,,Haut de gamme,Gants Alpinestars Tech 1-KX V4 (FIA 8877-2022),119,https://www.itakashop.com/fr/gants-homologues-fia/13291-7326-gants-alpinestars-tech-1-kx-v4-fia-8877-2022.html
-manometre_basic,Matériel,,Basique,Manomètre de pression digitale GT2i Race & Safety,29.90,https://www.gt2i.com/fr/autres-outils/158439-manometre-de-pression-digitale-gt2i-race-safety-3661768827802.html
-manometre_premium,Matériel,,Haut de gamme,Manomètre digital ROTAX,289.10,https://www.itakashop.com/fr/manometres/1978-manometre-digital-rotax.html
-outils_basic,Matériel,,Basique,Kit outillage karting (basique),50,Estimation
-outils_premium,Matériel,,Haut de gamme,Kit outillage karting parc fermé,394.80,https://www.itakashop.com/fr/outillage-kart-divers/12728-kit-outillage-karting-parc-ferme.html
-decolleuse_pneus,Matériel,,Standard,Pack décolleuse + ciseaux pneu Karting Cobra,99.99,https://magickart.eu/fr/accessoires-pneu/6293-pack-decolleuse-et-ciseaux-pneu-karting-cobra-offert-demonte-obus-3000000042489.html
-gonfleur,Matériel,,Basique,Gonfleur kart,50,Estimation
-mecano_ami,Services,,Basique,Mécano journée — ami bénévole,0,
-mecano_pro,Services,,Haut de gamme,Tarif mécano officiel / journée,150,Devis confidentiel
-inscription_course_club,Course,,Standard,Inscription course club,150,
-location_box_we,Course,,Standard,Location d'un box pour un week-end,60,Box Ancenis
-essence_journee,Course,,Standard,"Essence — 1 journée de roulage (5×10 min)",50,
-pneus_vega_basic,Course,,Basique,1 train de pneus Vega XH4 Second Choix,174.99,https://magickart.eu/fr/vega/8422-set-de-4-pneus-kart-vega-xh4-second-choix.html
-engagement_ligue,Course,,Standard,Engagement Ligue BPL — 4 courses 2026,600,https://ligue-karting-bpl.fr/
-pneus_vega_ligue,Course,,Standard,1 train de pneus Vega XH4 (ligue),220,https://ligue-karting-bpl.fr/
-engagement_ligue_journee,Course,,Standard,Engagement ligue à la journée,150,https://ligue-karting-bpl.fr/
-sprint_location,Course,,Loisir,Sprint SWS karting de location (coût moyen),75,https://www.karting-laval.fr/course-endurance/
-endurance_2h,Course,,Loisir,Endurance 2H par pilote (équipe de 2),100,https://www.karting-laval.fr/course-endurance/
-endurance_4h,Course,,Loisir,Endurance 4H par pilote (équipe de 2),220,https://www.karting-laval.fr/course-endurance/
-endurance_6h,Course,,Loisir,Endurance 6H par pilote (équipe de 4),167.50,https://www.karting-laval.fr/course-endurance/
-endurance_12h,Course,,Loisir,Endurance 12H par pilote (équipe de 6),216.67,https://www.karting-laval.fr/course-endurance/
-endurance_24h,Course,,Loisir,Endurance 24H par pilote (équipe de 6),431.67,https://www.karting-laval.fr/course-endurance/
-tente_paddock,Logistique,,Basique,Tente paddock 24MX Easy-Up avec cloisons,119,https://www.24mx.fr/product/tente-paddock-24mx-easy-up-avec-cloisons-noire_pid-21116-18WW
-hotel_nuit,Hébergement,,Standard,Hébergement hôtel — nuit (estimation),80,Estimation
+Catégorie,Sous-catégorie,Gamme,Description,Prix,Source,,
+Matériel,,Haut de gamme,Karting SODIKART NEUF PRET A ROULER,"8 500,00 €",Prix,,
+Matériel,,Haut de gamme,Karting quasiment neuf (2h de roulage) de la finale mondiale,"6 600,00 €","Devis des teams tel quel GKart53, Itakashop etc",,
+Matériel,,Basique,Karting occasion (à acheter chez un redevendeur spécialisé),"3 000,00 €",Prix observé chez revendeur spécialisé,,
+Matériel,Transport,Basique,CHARIOT KART MEKAONE,"199,90 €",https://www.itakashop.com/fr/chariots-kart/10591-chariot-kart-mekaone.html,,
+Matériel,,Haut de gamme,CHARIOT KART BASCULANT MEKAONE,"379,90 €",https://www.itakashop.com/fr/chariots-kart/9882-chariot-kart-basculant-mekaone.html,,
+Services,,Prix variable,Droit de piste à l'année,"300,00 €",,,
+Administratif,,Prix variable,Licence FFSA NNCK,"179,00 €",,,
+Administratif,,Basique,Licence FFSA NECCHK,"109,00 €",,,
+Matériel,Transport,Basique,Plateau simple (le bon coin par exemple),"200,00 €",,,
+Logistique,Transport,Idem,Location Véhicule Type Trafic pour 3 jours,"150,00 €",Prix estimé à partir des derniers locations,,
+Matériel,Transport,Haut de gamme,Remorque,"1 000,00 €",,,
+Logistique,,Basique,Gardiennage à l'année (petit box),"45,00 €",Facture confidentielle,,
+Services,,Haut de gamme,Gardiennage à l'année (grand box),"55,00 €",Facture confidentielle,,
+Matériel,Maintenance,Haut de gamme,Révision annuelle complète (compétition),"990,00 €",Devis confidentiel,,
+Equipement,,Basique,CASQUE ZAMP RZ-38,"329,00 €",https://www.itakashop.com/fr/casques-competition/13553-7534-casque-zamp-rz-38-xs.html#/346-taille-xs,,
+Equipement,,Haut de gamme,CASQUE BELL RS7-K,"744,00 €",https://www.itakashop.com/fr/casques-competition/13293-7340-casque-bell-rs7-k-fia-8878-2024.html#/416-taille-57_58_s,,
+Equipement,,Basique,COMBINAISON BOX'S BKX GRISE,"179,00 €",https://www.itakashop.com/fr/combinaisons-homologuees-fia/13060-7058-combinaison-boxs-bkx-grise.html#/337-taille-50,,
+Equipement,,Haut de gamme,COMBINAISON OFFICIELLE SODI OMP,"519,00 €",https://www.itakashop.com/fr/combinaisons-homologuees-fia/12894-6937-combinaison-officielle-sodi-omp.html#/337-taille-50,,
+Equipement,,Basique,GANTS ALPINESTARS TECH 1 K RACE V2 PURE,"44,95 €",https://www.itakashop.com/fr/gants/13244-7254-gants-alpinestars-tech-1-k-race-v2-pure.html#/348-taille-m,,
+Equipement,,Haut de gamme,GANTS ALPINESTARS TECH 1-KX V4 - FIA 8877-2022,"119,00 €",https://www.itakashop.com/fr/gants-homologues-fia/13291-7326-gants-alpinestars-tech-1-kx-v4-fia-8877-2022.html#/347-taille-s/858-couleur-noir_orange,,
+Matériel,,Basique,Manomètre de pression digitale GT2i Race & Safety,"29,90 €",https://www.gt2i.com/fr/autres-outils/158439-manometre-de-pression-digitale-gt2i-race-safety-3661768827802.html?gad_source=1&gad_campaignid=22450587351&gbraid=0AAAAADLmoCDGrI8zUsAAutYiwC7m57sVy&gclid=Cj0KCQjwp7jOBhDGARIsABe7C4cNCec9bqytjk5C97219gXgg2v0kQKooA8OHXP0eGtxNQGDiG6OvsEaAtQdEALw_wcB,,
+Matériel,,Haut de gamme,MANOMETRE DIGITAL ROTAX,"289,10 €",https://www.itakashop.com/fr/manometres/1978-manometre-digital-rotax.html,,
+Matériel,,Idem,Pack décolleuse et ciseaux pneu Karting Cobra offert démonte obus,"99,99 €",https://magickart.eu/fr/accessoires-pneu/6293-pack-decolleuse-et-ciseaux-pneu-karting-cobra-offert-demonte-obus-3000000042489.html,,
+Matériel,,Basique,KIT OUTILLAGE KARTING fait manuellement,"200,00 €",,,
+Matériel,,Haut de gamme,KIT OUTILLAGE KARTING pré-fait,"394,80 €",https://www.itakashop.com/fr/outillage-kart-divers/12728-kit-outillage-karting-parc-ferme.html,,
+Services,,Basique,Mécano journée ami,"0,00 €",,,
+Services,,Haut de gamme,Tarif Mécano Officiel / Journée,"150,00 €",Devis confidentiel,,
+Services,,Haut de gamme,LOCATION CHASSIS WEEK-END,"500,00 €",Devis team compétition (confidentiel),,
+Services,,Haut de gamme,LOCATION MOTEUR WEEK-END,"500,00 €",Devis team compétition (confidentiel),,
+Logistique,Transport,Idem,Location Véhicule Type Trafic pour 3 jours,"150,00 €",Prix estimé à partir des derniers locations,,
+Services,,Idem,Inscription Course Club,"150,00 €",,,
+Administratif,,Idem,Location d'un BOX pour un WE,"60,00 €",Box Ancenis,,
+Matériel,,Basique,Tente Paddock 24MX Easy-Up avec Cloisons Noire,"119,00 €",https://www.24mx.fr/product/tente-paddock-24mx-easy-up-avec-cloisons-noire_pid-21116-18WW?channable=06d13d69640032313131362d31385757eb&gclsrc=aw.ds&utm_source=google&utm_medium=cpc&utm_campaign=CO:FR%20-%20PMax%20-%20FMB&utm_id=23039791155&gad_source=1&gad_campaignid=23049918652&gbraid=0AAAAAC2sQZgFaQBV8HLkcKKHC_C6W50BN&gclid=Cj0KCQjwp7jOBhDGARIsABe7C4d9pZ2tooJJyI4_NZ94e3qi1eG6HXbt64HWIAT4FLH9T04mZKsqTMwaAt7oEALw_wcB,,
+Course,,Idem,ENGAGEMENT LIGUE 4 COURSES 2026,"600,00 €",https://ligue-karting-bpl.fr/?lang=fr,,
+Course,,Idem,1 TRAIN DE VEGA XH4 LIGUE 2026,"220,00 €",https://ligue-karting-bpl.fr/?lang=fr,,
+Course,,Idem,ENGAGEMENT LIGUE A LA JOURNEE,"150,00 €",https://ligue-karting-bpl.fr/?lang=fr,,
+Course,,Basique,1 TRAIN DE VEGA XH4 SECOND CHOIX (défault uniquement visuel),"174,99 €",https://magickart.eu/fr/vega/8422-set-de-4-pneus-kart-vega-xh4-second-choix.html,,"Pièces si casse : couronne, bielette"
+Matériel,,Idem,ESSENCE 1 JOURNEE ROULAGE (5x10min),"50,00 €",,,Pièces à changer régulièrement
+Course,,,COUT MOYEN SPRINT SWS KARTING DE LOCATION,"75,00 €",https://www.karting-laval.fr/course-endurance/,,Plaquettes
+Course,,,COUT MOYEN ENDURANCE 2H PAR PILOTE (EQUIPE DE 2),"100,00 €",https://www.karting-laval.fr/course-endurance/,,Filtre à air
+Course,,,COUT MOYEN ENDURANCE 4H PAR PILOTE (EQUIPE DE 2),"220,00 €",https://www.karting-laval.fr/course-endurance/,,
+Course,,,COUT MOYEN ENDURANCE 6H PAR PILOTE (EQUIPE DE 4),"167,50 €",https://www.karting-laval.fr/course-endurance/,,
+Course,,,COUT MOYEN ENDURANCE 12H PAR PILOTE (EQUIPE DE 6),"216,67 €",https://www.karting-laval.fr/course-endurance/,,
+Course,,,COUT MOYEN ENDURANCE 24H PAR PILOTE (EQUIPE DE 6),"431,67 €",https://www.karting-laval.fr/course-endurance/,,
+Course,,,Service course team pro - location moteur,"500,00 €",,,
+Course,,,Service course team pro - location chassis,"500,00 €",,,
+Course,,,"Service course team pro - tente et services, mise à dispo outils","1 000,00 €",,,
+,,,Bielletes,,,,
+Matériel,Maintenance,Idem,HUILE MOTUL KART GP 2T,"13,60 €",https://www.itakashop.com/fr/huiles-2-temps-karting/1450-huile-motul-kart-gp-2t.html,,
+Matériel,Maintenance,Idem,GRAISSE A CHAINE RK,"12,00 €",https://www.itakashop.com/fr/graisses-a-chaine-karting/1460-graisse-a-chaine-rk.html,,
+Matériel,,,PLAQUETTES ARRIERE C+ ETRIER TEKNEEX 4 PISTONS D20,"83,90 €",https://www.itakashop.com/fr/plaquettes-de-freins-kart/12189-plaquettes-arriere-c-etrier-tekneex-4-pistons-d20.html,,

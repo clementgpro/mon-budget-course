@@ -73,6 +73,15 @@ window.COSTS_DATA = [
     prix: 1000,
     source: ""
   },
+  {
+    key: "location_vehicule",
+    categorie: "Logistique",
+    souscategorie: "Transport",
+    gamme: "Standard",
+    description: "Location véhicule type Trafic — 3 jours",
+    prix: 150,
+    source: "Prix estimé"
+  },
 
   // ── Stockage ───────────────────────────────────────────────
   {
@@ -105,13 +114,22 @@ window.COSTS_DATA = [
     source: ""
   },
   {
-    key: "licence_ffsa",
+    key: "licence_ffsa_nnck",
+    categorie: "Administratif",
+    souscategorie: "",
+    gamme: "Standard",
+    description: "Licence FFSA NNCK",
+    prix: 179,
+    source: ""
+  },
+  {
+    key: "licence_ffsa_necchk",
     categorie: "Administratif",
     souscategorie: "",
     gamme: "Basique",
-    description: "Licence FFSA",
-    prix: 200,
-    source: "Estimation"
+    description: "Licence FFSA NECCHK",
+    prix: 109,
+    source: ""
   },
 
   // ── Révision ───────────────────────────────────────────────
@@ -211,9 +229,9 @@ window.COSTS_DATA = [
     categorie: "Matériel",
     souscategorie: "",
     gamme: "Basique",
-    description: "Kit outillage karting (basique)",
-    prix: 50,
-    source: "Estimation"
+    description: "Kit outillage karting (fait manuellement)",
+    prix: 200,
+    source: ""
   },
   {
     key: "outils_premium",
@@ -385,7 +403,63 @@ window.COSTS_DATA = [
     prix: 431.67,
     source: "https://www.karting-laval.fr/course-endurance/"
   },
+  // ── Services team compétition ─────────────────────────────────
+  {
+    key: "location_chassis_we",
+    categorie: "Services",
+    souscategorie: "",
+    gamme: "Haut de gamme",
+    description: "Location châssis week-end (team)",
+    prix: 500,
+    source: "Devis team compétition (confidentiel)"
+  },
+  {
+    key: "location_moteur_we",
+    categorie: "Services",
+    souscategorie: "",
+    gamme: "Haut de gamme",
+    description: "Location moteur week-end (team)",
+    prix: 500,
+    source: "Devis team compétition (confidentiel)"
+  },
+  {
+    key: "service_team_tente",
+    categorie: "Services",
+    souscategorie: "",
+    gamme: "Haut de gamme",
+    description: "Service team pro — tente, outils et mise à disposition",
+    prix: 1000,
+    source: "Devis team compétition (confidentiel)"
+  },
 
+  // ── Consommables maintenance ──────────────────────────────
+  {
+    key: "huile_motul",
+    categorie: "Matériel",
+    souscategorie: "Maintenance",
+    gamme: "Standard",
+    description: "Huile Motul Kart GP 2T",
+    prix: 13.60,
+    source: "https://www.itakashop.com/fr/huiles-2-temps-karting/1450-huile-motul-kart-gp-2t.html"
+  },
+  {
+    key: "graisse_chaine",
+    categorie: "Matériel",
+    souscategorie: "Maintenance",
+    gamme: "Standard",
+    description: "Graisse à chaîne RK",
+    prix: 12,
+    source: "https://www.itakashop.com/fr/graisses-a-chaine-karting/1460-graisse-a-chaine-rk.html"
+  },
+  {
+    key: "plaquettes_frein",
+    categorie: "Matériel",
+    souscategorie: "Maintenance",
+    gamme: "Standard",
+    description: "Plaquettes arrière C+ Étrier Tekneex 4 pistons D20",
+    prix: 83.90,
+    source: "https://www.itakashop.com/fr/plaquettes-de-freins-kart/12189-plaquettes-arriere-c-etrier-tekneex-4-pistons-d20.html"
+  },
   // ── Hébergement / Paddock ──────────────────────────────────
   {
     key: "tente_paddock",
@@ -431,13 +505,14 @@ window.QUESTIONS_DATA = [
     group: "Profil"
   },
   {
-    id: "age",
-    label: "Quel âge as-tu ?",
-    hint: "Utilisé pour suggérer une catégorie de course adaptée.",
-    type: "number",
-    min: 8,
-    max: 80,
-    options: null,
+    id: "pratique",
+    label: "Loisir ou compétition ?",
+    hint: "Tu peux cocher les deux si tu fais les deux.",
+    type: "checkbox",
+    options: [
+      { value: "loisir",      label: "Loisir — karting de location, endurance…" },
+      { value: "competition", label: "Compétition — championnat club, ligue, régional…" }
+    ],
     condition: null,
     prefill: null,
     defaultValue: null,
@@ -453,22 +528,8 @@ window.QUESTIONS_DATA = [
       { value: "premium",      label: "Premium — je veux le meilleur" },
       { value: "personnalise", label: "Personnalisé — je choisis poste par poste" }
     ],
-    condition: null,
+    condition: "pratique=competition",
     prefill: "profil=noob>budget=economique",
-    defaultValue: null,
-    group: "Profil"
-  },
-  {
-    id: "pratique",
-    label: "Loisir ou compétition ?",
-    hint: "Tu peux cocher les deux si tu fais les deux.",
-    type: "checkbox",
-    options: [
-      { value: "loisir",      label: "Loisir — karting de location, endurance…" },
-      { value: "competition", label: "Compétition — championnat club, ligue, régional…" }
-    ],
-    condition: null,
-    prefill: null,
     defaultValue: null,
     group: "Profil"
   },
@@ -478,11 +539,11 @@ window.QUESTIONS_DATA = [
     hint: "Les catégories sont définies par la FFSA selon l'âge.",
     type: "select",
     options: [
-      { value: "mini60",    label: "Mini 60 (8–12 ans)" },
-      { value: "nationale", label: "Nationale (12–17 ans)" },
       { value: "senior",    label: "Senior (14 ans +)" },
       { value: "master",    label: "Master (32 ans +)" },
-      { value: "kz2",       label: "KZ2" }
+      { value: "mini60",    label: "Mini 60 (8–12 ans) — à venir", disabled: true },
+      { value: "nationale", label: "Nationale (12–17 ans) — à venir", disabled: true },
+      { value: "kz2",       label: "KZ2 — à venir", disabled: true }
     ],
     condition: "pratique=competition",
     prefill: null,
@@ -507,7 +568,7 @@ window.QUESTIONS_DATA = [
 
   // ── Questions Loisir ──────────────────────────────────────
   {
-    id: "nb_sprint",
+    id: "nb_courses_loisir",
     label: "Combien de sessions sprint par mois ? (× 12 = annuel)",
     hint: "Sprint = séance courte en karting de location (~15–30 min).",
     type: "number",
@@ -552,20 +613,27 @@ window.QUESTIONS_DATA = [
     group: "Compétition"
   },
   {
-    id: "nb_courses_ligue",
-    label: "Combien de courses de ligue dans l'année ?",
-    hint: "La ligue BPL propose 4 courses en 2026.",
-    type: "number",
-    min: 0,
-    max: 10,
-    options: null,
-    condition: "perimetre=regional",
+    condition: "pratique=competition&perimetre=regional",
     prefill: null,
     defaultValue: 4,
     group: "Compétition"
   },
 
-  // ── Matériel ───────────────────────────────────────────────
+  // ── Team & Matériel ─────────────────────────────────────────────────
+  {
+    id: "team",
+    label: "Souhaites-tu rejoindre un team ?",
+    hint: "Un team fournit le châssis et le moteur moyennant location. Cela évite l'achat du matériel.",
+    type: "radio",
+    options: [
+      { value: "oui", label: "Oui — je veux intégrer un team" },
+      { value: "non", label: "Non — je roule avec mon propre matériel" }
+    ],
+    condition: "pratique=competition&budget=premium|personnalise",
+    prefill: null,
+    defaultValue: null,
+    group: "Compétition"
+  },
   {
     id: "karting",
     label: "As-tu déjà un karting ?",
@@ -575,8 +643,22 @@ window.QUESTIONS_DATA = [
       { value: "oui", label: "Oui — j'ai déjà un karting" },
       { value: "non", label: "Non — je dois en acheter un" }
     ],
-    condition: null,
+    condition: "pratique=competition&team=non",
     prefill: null,
+    defaultValue: null,
+    group: "Matériel"
+  },
+  {
+    id: "revision_moteur",
+    label: "Prévois-tu une révision moteur cette année ?",
+    hint: "Révision annuelle complète recommandée en compétition (~990 €).",
+    type: "radio",
+    options: [
+      { value: "oui", label: "Oui" },
+      { value: "non", label: "Non" }
+    ],
+    condition: "pratique=competition&karting=oui",
+    prefill: "karting=non>revision_moteur=non",
     defaultValue: null,
     group: "Matériel"
   },
@@ -591,7 +673,7 @@ window.QUESTIONS_DATA = [
       { value: "tony_kart", label: "Tony Kart" },
       { value: "indifferent", label: "Peu importe" }
     ],
-    condition: "karting=non",
+    condition: "pratique=competition&karting=non",
     prefill: null,
     defaultValue: null,
     group: "Matériel"
@@ -602,11 +684,12 @@ window.QUESTIONS_DATA = [
     hint: null,
     type: "radio",
     options: [
-      { value: "remorque", label: "Remorque" },
-      { value: "plateau",  label: "Plateau" },
-      { value: "deja",     label: "J'ai déjà ce qu'il faut" }
+      { value: "location", label: "Location de véhicule (~150 €/WE)" },
+      { value: "remorque",  label: "Achat remorque" },
+      { value: "plateau",   label: "Achat plateau" },
+      { value: "deja",      label: "J'ai déjà ce qu'il faut" }
     ],
-    condition: null,
+    condition: "pratique=competition&team=non",
     prefill: null,
     defaultValue: null,
     group: "Logistique"
@@ -620,7 +703,7 @@ window.QUESTIONS_DATA = [
       { value: "box",    label: "Gardiennage dans un box sur circuit" },
       { value: "maison", label: "Je le garde chez moi" }
     ],
-    condition: null,
+    condition: "pratique=competition&team=non",
     prefill: null,
     defaultValue: null,
     group: "Logistique"
@@ -634,21 +717,21 @@ window.QUESTIONS_DATA = [
       { value: "oui", label: "Oui" },
       { value: "non", label: "Non" }
     ],
-    condition: null,
+    condition: "pratique=competition&team=non",
     prefill: null,
     defaultValue: null,
     group: "Matériel"
   },
   {
     id: "outils",
-    label: "As-tu déjà les outils nécessaires ?",
+    label: "As-tu déjà tous les outils nécessaires ?",
     hint: null,
     type: "radio",
     options: [
       { value: "oui", label: "Oui" },
       { value: "non", label: "Non" }
     ],
-    condition: null,
+    condition: "pratique=competition&team=non",
     prefill: null,
     defaultValue: null,
     group: "Matériel"
@@ -706,7 +789,7 @@ window.QUESTIONS_DATA = [
       { value: "oui", label: "Oui" },
       { value: "non", label: "Non" }
     ],
-    condition: null,
+    condition: "pratique=competition",
     prefill: null,
     defaultValue: null,
     group: "Matériel"
@@ -720,7 +803,7 @@ window.QUESTIONS_DATA = [
       { value: "oui", label: "Oui" },
       { value: "non", label: "Non" }
     ],
-    condition: null,
+    condition: "pratique=competition",
     prefill: null,
     defaultValue: null,
     group: "Matériel"

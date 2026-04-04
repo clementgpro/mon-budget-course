@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    Mon Budget Course — app.js
    Logique complète : questions, conditions, calcul, rendu, chart
    Données : window.COSTS_DATA + window.QUESTIONS_DATA (data/data.js)
@@ -6,9 +6,11 @@
 
 // ── État global ──────────────────────────────────────────────
 const state = {
-  answers: {},          // { questionId: value }  (checkbox → array)
-  costsIndex: null,     // Map<key, costRow>
-  questions: [],        // QUESTIONS_DATA
+  answers: {},           // { questionId: value }  (checkbox → array)
+  costsIndex: null,      // Map<key, costRow>
+  questions: [],         // QUESTIONS_DATA
+  touchedIds: new Set(), // IDs explicitement répondus (number/endurance)
+  calculated: false,     // true après clic "Calculer"
 };
 
 // ── Règles de calcul du budget ───────────────────────────────
@@ -23,7 +25,7 @@ const COST_RULES = [
     category: 'Matériel',
     isOneTime: true,
     condition: a => a.karting === 'non',
-    costKey: a => a.budget === 'premium' ? 'karting_neuf_haut' : 'karting_occasion',
+    costKey: a => (a.karting_gamme || a.budget) === 'premium' ? 'karting_neuf_haut' : 'karting_occasion',
     multiplier: _ => 1,
   },
 
@@ -34,7 +36,7 @@ const COST_RULES = [
     category: 'Matériel',
     isOneTime: true,
     condition: a => a.chariot === 'non',
-    costKey: a => a.budget === 'premium' ? 'chariot_premium' : 'chariot_basic',
+    costKey: a => (a.chariot_gamme || a.budget) === 'premium' ? 'chariot_premium' : 'chariot_basic',
     multiplier: _ => 1,
   },
 
@@ -56,7 +58,7 @@ const COST_RULES = [
     category: 'Équipement',
     isOneTime: true,
     condition: a => a.casque === 'non',
-    costKey: a => a.budget === 'premium' ? 'casque_premium' : 'casque_basic',
+    costKey: a => (a.casque_gamme || a.budget) === 'premium' ? 'casque_premium' : 'casque_basic',
     multiplier: _ => 1,
   },
 
@@ -67,7 +69,7 @@ const COST_RULES = [
     category: 'Équipement',
     isOneTime: true,
     condition: a => a.combinaison === 'non',
-    costKey: a => a.budget === 'premium' ? 'combinaison_premium' : 'combinaison_basic',
+    costKey: a => (a.combinaison_gamme || a.budget) === 'premium' ? 'combinaison_premium' : 'combinaison_basic',
     multiplier: _ => 1,
   },
 
@@ -78,7 +80,7 @@ const COST_RULES = [
     category: 'Équipement',
     isOneTime: true,
     condition: a => a.gants === 'non',
-    costKey: a => a.budget === 'premium' ? 'gants_premium' : 'gants_basic',
+    costKey: a => (a.gants_gamme || a.budget) === 'premium' ? 'gants_premium' : 'gants_basic',
     multiplier: _ => 1,
   },
 
@@ -89,7 +91,7 @@ const COST_RULES = [
     category: 'Matériel',
     isOneTime: true,
     condition: a => a.manometre === 'non',
-    costKey: a => a.budget === 'premium' ? 'manometre_premium' : 'manometre_basic',
+    costKey: a => (a.manometre_gamme || a.budget) === 'premium' ? 'manometre_premium' : 'manometre_basic',
     multiplier: _ => 1,
   },
 
@@ -100,7 +102,7 @@ const COST_RULES = [
     category: 'Matériel',
     isOneTime: true,
     condition: a => a.outils === 'non',
-    costKey: a => a.budget === 'premium' ? 'outils_premium' : 'outils_basic',
+    costKey: a => (a.outils_gamme || a.budget) === 'premium' ? 'outils_premium' : 'outils_basic',
     multiplier: _ => 1,
   },
 
@@ -147,7 +149,7 @@ const COST_RULES = [
     label: 'Révision annuelle',
     category: 'Matériel',
     isOneTime: false,
-    condition: a => hasPractice(a, 'competition'),
+    condition: a => a.revision_moteur === 'oui',
     costKey: _ => 'revision_annuelle',
     multiplier: _ => 1,
   },
@@ -170,7 +172,9 @@ const COST_RULES = [
     category: 'Administratif',
     isOneTime: false,
     condition: a => hasPractice(a, 'competition'),
-    costKey: _ => 'licence_ffsa',
+    costKey: a => a.categorie === 'senior' || a.categorie === 'master' || a.categorie === 'kz2'
+      ? 'licence_ffsa_nnck'
+      : 'licence_ffsa_necchk',
     multiplier: _ => 1,
   },
 
@@ -243,6 +247,35 @@ const COST_RULES = [
     multiplier: a => totalCoursesComp(a),
   },
 
+  // ── Services team
+  {
+    key: 'team_chassis',
+    label: 'Location châssis (team)',
+    category: 'Services',
+    isOneTime: false,
+    condition: a => a.team === 'oui',
+    costKey: _ => 'location_chassis_we',
+    multiplier: a => totalCoursesComp(a) || 1,
+  },
+  {
+    key: 'team_moteur',
+    label: 'Location moteur (team)',
+    category: 'Services',
+    isOneTime: false,
+    condition: a => a.team === 'oui',
+    costKey: _ => 'location_moteur_we',
+    multiplier: a => totalCoursesComp(a) || 1,
+  },
+  {
+    key: 'team_services',
+    label: 'Services team (tente, outils)',
+    category: 'Services',
+    isOneTime: false,
+    condition: a => a.team === 'oui',
+    costKey: _ => 'service_team_tente',
+    multiplier: _ => 1,
+  },
+
   // ── Hébergement hôtel ───────────────────────────────────────
   {
     key: 'hebergement_hotel',
@@ -313,6 +346,18 @@ const COST_RULES = [
   },
 ];
 
+// ── Mapping gamme éco/premium par question ────────────────────
+// La clé correspond à q.id ; eco/premium sont des clés de COSTS_DATA
+const PRICE_HINT_MAP = {
+  karting:     { gammeKey: 'karting_gamme',     eco: 'karting_occasion',  premium: 'karting_neuf_haut' },
+  chariot:     { gammeKey: 'chariot_gamme',     eco: 'chariot_basic',     premium: 'chariot_premium' },
+  casque:      { gammeKey: 'casque_gamme',      eco: 'casque_basic',      premium: 'casque_premium' },
+  combinaison: { gammeKey: 'combinaison_gamme', eco: 'combinaison_basic', premium: 'combinaison_premium' },
+  gants:       { gammeKey: 'gants_gamme',       eco: 'gants_basic',       premium: 'gants_premium' },
+  manometre:   { gammeKey: 'manometre_gamme',   eco: 'manometre_basic',   premium: 'manometre_premium' },
+  outils:      { gammeKey: 'outils_gamme',      eco: 'outils_basic',      premium: 'outils_premium' },
+};
+
 // ── Helpers d'accès à l'état ─────────────────────────────────
 
 /** Vérifie si une pratique est sélectionnée (checkbox = array) */
@@ -334,13 +379,81 @@ function totalCoursesComp(a) {
 }
 
 function nbSprint(a) {
-  return parseInt(a.nb_sprint, 10) || 0;
+  return parseInt(a.nb_courses_loisir, 10) || 0;
 }
 
 /** Nombre de sessions endurance pour une durée donnée */
 function nbEndurance(a, duree) {
   const raw = a[`endurance_${duree}`];
   return parseInt(raw, 10) || 0;
+}
+
+// ── Gamme toggle (barre sticky) ──────────────────────────────────
+
+/** Affiche la barre, met à jour le bouton actif, rafraîchit les chips de prix */
+function updateGammeUI(value) {
+  const bar = document.getElementById('budget-bar');
+  if (bar) bar.classList.add('budget-bar--visible');
+
+  document.querySelectorAll('.gamme-btn').forEach(btn => {
+    btn.classList.toggle('gamme-btn--active', btn.dataset.gamme === value);
+  });
+
+  // Le choix global propage à tous les items (reset)
+  for (const hints of Object.values(PRICE_HINT_MAP)) {
+    state.answers[hints.gammeKey] = value;
+  }
+
+  updateAllPriceHints();
+}
+
+/** (Re)génère les chips de prix dans toutes les cartes concernées */
+function updateAllPriceHints() {
+  for (const [qId, hints] of Object.entries(PRICE_HINT_MAP)) {
+    const div = document.getElementById(`price-hint-${qId}`);
+    if (!div) continue;
+    // Gamme de cet item : choix individuel ou fallback sur le budget global
+    const itemGamme = state.answers[hints.gammeKey] || state.answers.budget;
+    renderPriceHint(div, hints, itemGamme);
+  }
+}
+
+/**
+ * (Re)crée le contenu d'un .price-hint.
+ * @param {HTMLElement} div - conteneur .price-hint
+ * @param {{ eco: string, premium: string }} hints - clés COSTS_DATA
+ * @param {string|undefined} activeBudget - 'economique' | 'premium' | undefined
+ */
+function renderPriceHint(div, hints, activeBudget) {
+  div.innerHTML = '';
+  const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + '\u00a0\u20ac';
+
+  const chips = [
+    { gamme: 'economique', label: '\u00c9co.', costKey: hints.eco },
+    { gamme: 'premium',    label: 'Premium', costKey: hints.premium },
+  ];
+
+  for (const chip of chips) {
+    const row = state.costsIndex && state.costsIndex.get(chip.costKey);
+    if (!row) continue;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'price-hint-chip' +
+      (activeBudget === chip.gamme ? ' price-hint-chip--active' : '');
+    btn.setAttribute('aria-pressed', activeBudget === chip.gamme ? 'true' : 'false');
+    btn.title = `Passer en gamme ${chip.label}`;
+    btn.innerHTML =
+      `<span class="chip-gamme">${escapeHtml(chip.label)}</span> ${escapeHtml(fmt(row.prix))}`;
+
+    btn.addEventListener('click', () => {
+      // Met à jour uniquement la gamme de cet item, pas le budget global
+      handleAnswer(hints.gammeKey, chip.gamme);
+      if (state.calculated) calculateAndRender();
+    });
+
+    div.appendChild(btn);
+  }
 }
 
 // ── Debounce ────────────────────────────────────────────────
@@ -366,23 +479,82 @@ function init() {
       state.answers[q.id] = [];
     } else if (q.defaultValue !== null && q.defaultValue !== undefined) {
       state.answers[q.id] = q.defaultValue;
+      // Pré-marquer comme touché les champs number avec valeur par défaut
+      if (q.type === 'number') state.touchedIds.add(q.id);
     }
   }
 
-  // 4. Générer le DOM des questions
+  // 4. Générer le DOM des questions (toutes verrouillées)
   renderQuestions();
 
-  // 5. Appliquer les conditions initiales
-  evaluateConditions();
+  // 5. Révéler la première question
+  updateReveal();
 
-  // 6. Premier calcul (vide)
-  calculateAndRender();
+  // 6. Bouton Calculer
+  const btnCalc = document.getElementById('btn-calculate');
+  if (btnCalc) {
+    btnCalc.addEventListener('click', () => {
+      if (btnCalc.disabled) return;
 
-  // 7. Dark mode
+      // Animation "fired" sur le bouton
+      btnCalc.classList.add('btn-calculate--fired');
+      btnCalc.textContent = '';
+      btnCalc.innerHTML = 'Calcul en cours… <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2" stroke-dasharray="28" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 9 9" to="360 9 9" dur="0.7s" repeatCount="indefinite"/></circle></svg>';
+
+      setTimeout(() => {
+        state.calculated = true;
+        // Réinitialiser la modale pour ce nouveau calcul
+        sessionStorage.removeItem('mbc-donation-seen');
+
+        const barEl = document.getElementById('budget-bar');
+        if (barEl) barEl.classList.remove('budget-bar--pending');
+        calculateAndRender();
+
+        const detail = document.querySelector('.detail-fullwidth');
+        if (detail) {
+          detail.classList.remove('detail-hidden');
+          // Force le re-déclenchement de l'animation en retirant puis remettant la classe
+          detail.classList.remove('detail-revealed');
+          void detail.offsetWidth; // reflow
+          detail.classList.add('detail-revealed');
+        }
+
+        btnCalc.classList.remove('btn-calculate--fired');
+        btnCalc.innerHTML = 'Voir les résultats <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 3v12M4 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+        setTimeout(() => {
+          const resultsEl = document.querySelector('.detail-fullwidth');
+          if (resultsEl) resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+      }, 600);
+    });
+  }
+
+  // 7. État en attente sur le panel résultats
+  const totalsPanel = document.getElementById('totals-panel');
+  if (totalsPanel) totalsPanel.classList.add('results-pending');
+
+  // 8. Observer scroll pour animations
+  setupIntersectionObserver();
+
+  // 9. Dark mode
   initTheme();
 
-  // 8. Tooltip sur le tableau
+  // 10. Tooltip sur le tableau
   initTooltip();
+
+  // 11. Gamme toggle : écouteurs sur les boutons sticky de la budget-bar
+  document.querySelectorAll('.gamme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const gamme = btn.dataset.gamme;
+      syncInputValue('budget', gamme);
+      handleAnswer('budget', gamme);
+      if (state.calculated) calculateAndRender();
+    });
+  });
+
+  // 12. Remplir les chips de prix dès que costsIndex est prêt
+  updateAllPriceHints();
 }
 
 // ── Index des coûts ──────────────────────────────────────────
@@ -398,48 +570,21 @@ function buildCostsIndex(data) {
 function renderQuestions() {
   const panel = document.getElementById('questions-panel');
   panel.innerHTML = '';
-  let cardIndex = 0;
 
-  // Grouper par section
-  const groups = {};
-  const groupOrder = [];
   for (const q of state.questions) {
-    const g = q.group || 'Général';
-    if (!groups[g]) {
-      groups[g] = [];
-      groupOrder.push(g);
-    }
-    groups[g].push(q);
+    const card = buildQuestionCard(q);
+    card.classList.add('card-locked');
+    panel.appendChild(card);
   }
+}
 
-  for (const groupName of groupOrder) {
-    const groupEl = document.createElement('div');
-    groupEl.className = 'question-group';
-
-    // Titre cliquable avec chevron
-    const title = document.createElement('div');
-    title.className = 'question-group-title';
-    title.innerHTML =
-      '<span>' + groupName + '</span>' +
-      '<svg class="group-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">' +
-        '<path d="M2.5 5l4.5 4 4.5-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</svg>';
-    title.addEventListener('click', () => groupEl.classList.toggle('collapsed'));
-    groupEl.appendChild(title);
-
-    // Corps avec animation stagger
-    const body = document.createElement('div');
-    body.className = 'question-group-body';
-
-    for (const q of groups[groupName]) {
-      const card = buildQuestionCard(q);
-      card.style.setProperty('--card-index', cardIndex++);
-      body.appendChild(card);
-    }
-
-    groupEl.appendChild(body);
-    panel.appendChild(groupEl);
+/** Questions simples : label à gauche, contrôle à droite sur une ligne */
+function isRowLayout(q) {
+  if (q.type === 'select' || q.type === 'number') return true;
+  if (q.type === 'radio') {
+    return q.options.length <= 3 && q.options.every(o => o.label.length <= 50);
   }
+  return false;
 }
 
 function buildQuestionCard(q) {
@@ -447,37 +592,56 @@ function buildQuestionCard(q) {
   card.className = 'question-card';
   card.id = `card-${q.id}`;
 
-  // Label
+  const row = isRowLayout(q);
+  if (row) card.classList.add('question-card--row');
+
+  // Conteneur principal (flex row ou block selon le type)
+  const main = document.createElement('div');
+  main.className = row ? 'question-row-main' : 'question-stack-main';
+
+  // Méta : label + hint (hint masqué en row pour économiser la hauteur)
+  const meta = document.createElement('div');
+  meta.className = 'question-meta';
+
   const label = document.createElement('div');
   label.className = 'question-label';
   label.textContent = q.label;
-  card.appendChild(label);
+  meta.appendChild(label);
 
-  // Hint
-  if (q.hint) {
+  if (q.hint && !row) {
     const hint = document.createElement('div');
     hint.className = 'question-hint';
     hint.textContent = q.hint;
-    card.appendChild(hint);
+    meta.appendChild(hint);
   }
+  main.appendChild(meta);
 
-  // Contrôle selon le type
+  // Contrôle
+  const ctrl = document.createElement('div');
+  ctrl.className = 'question-control';
+
   switch (q.type) {
-    case 'radio':
-      card.appendChild(buildRadio(q));
-      break;
-    case 'checkbox':
-      card.appendChild(buildCheckbox(q));
-      break;
+    case 'radio':    ctrl.appendChild(buildRadio(q));    break;
+    case 'checkbox': ctrl.appendChild(buildCheckbox(q)); break;
     case 'number':
-      card.appendChild(buildNumber(q));
+      ctrl.appendChild(buildNumber(q));
+      ctrl.appendChild(buildContinueBtn(q));
       break;
-    case 'select':
-      card.appendChild(buildSelect(q));
-      break;
+    case 'select':   ctrl.appendChild(buildSelect(q));   break;
     case 'endurance':
-      card.appendChild(buildEndurance(q));
+      ctrl.appendChild(buildEndurance(q));
+      ctrl.appendChild(buildContinueBtn(q));
       break;
+  }
+  main.appendChild(ctrl);
+  card.appendChild(main);
+
+  // Chips de prix éco/premium — pleine largeur sous le row
+  if (PRICE_HINT_MAP[q.id]) {
+    const hintDiv = document.createElement('div');
+    hintDiv.className = 'price-hint';
+    hintDiv.id = `price-hint-${q.id}`;
+    card.appendChild(hintDiv);
   }
 
   return card;
@@ -521,6 +685,9 @@ function buildRadio(q) {
 
 
 function buildRadioPills(q) {
+  // Segmented binary pour les radios à exactement 2 options
+  if (q.options.length === 2) return buildSegmentedBinary(q);
+
   const wrap = document.createElement('div');
   wrap.className = 'options-inline';
   for (const opt of q.options) {
@@ -646,6 +813,7 @@ function buildSelect(q) {
     const option = document.createElement('option');
     option.value = opt.value;
     option.textContent = opt.label;
+    if (opt.disabled) option.disabled = true;
     if (state.answers[q.id] === opt.value) option.selected = true;
     sel.appendChild(option);
   }
@@ -675,18 +843,41 @@ function buildEndurance(q) {
     input.min = 0;
     input.max = 20;
     input.value = state.answers[`endurance_${opt.value}`] || 0;
+    input.setAttribute('aria-label', `${opt.label} — nombre de fois par an`);
+
+    const update = (val) => {
+      const clamped = Math.min(20, Math.max(0, val));
+      input.value = clamped;
+      handleAnswer(`endurance_${opt.value}`, clamped);
+    };
 
     input.addEventListener('input', () => {
-      const val = Math.max(0, parseInt(input.value, 10) || 0);
-      input.value = val;
-      handleAnswer(`endurance_${opt.value}`, val);
+      update(parseInt(input.value, 10) || 0);
     });
+
+    const btnMinus = document.createElement('button');
+    btnMinus.type = 'button';
+    btnMinus.textContent = '−';
+    btnMinus.setAttribute('aria-label', `Diminuer ${opt.label}`);
+    btnMinus.addEventListener('click', () => update((parseInt(input.value, 10) || 0) - 1));
+
+    const btnPlus = document.createElement('button');
+    btnPlus.type = 'button';
+    btnPlus.textContent = '+';
+    btnPlus.setAttribute('aria-label', `Augmenter ${opt.label}`);
+    btnPlus.addEventListener('click', () => update((parseInt(input.value, 10) || 0) + 1));
+
+    const stepper = document.createElement('div');
+    stepper.className = 'number-stepper';
+    stepper.appendChild(btnMinus);
+    stepper.appendChild(btnPlus);
 
     const span = document.createElement('span');
     span.textContent = 'fois / an';
 
     row.appendChild(lbl);
     row.appendChild(input);
+    row.appendChild(stepper);
     row.appendChild(span);
     grid.appendChild(row);
   }
@@ -697,34 +888,30 @@ function buildEndurance(q) {
 // ── Gestion des réponses ─────────────────────────────────────
 function handleAnswer(id, value) {
   state.answers[id] = value;
-  evaluateConditions();
+  if (id === 'budget') updateGammeUI(value);
   applyPrefills();
-  calculateAndRender();
+  updateReveal();
 }
 
 // ── Évaluation des conditions ────────────────────────────────
-function evaluateConditions() {
-  for (const q of state.questions) {
-    const card = document.getElementById(`card-${q.id}`);
-    if (!card) continue;
-
-    const visible = isQuestionVisible(q);
-    card.classList.toggle('hidden', !visible);
-  }
-}
 
 function isQuestionVisible(q) {
   if (!q.condition) return true;
 
-  // Format : "questionId=value"
-  const [condId, condVal] = q.condition.split('=');
-  const answer = state.answers[condId];
+  // Format : "id=val1|val2&id2=val3" — AND entre clauses (&), OR entre valeurs (|)
+  const clauses = q.condition.split('&');
+  return clauses.every(clause => {
+    const eqIdx  = clause.indexOf('=');
+    const condId  = clause.slice(0, eqIdx).trim();
+    const condVal = clause.slice(eqIdx + 1).trim();
+    const answer  = state.answers[condId];
+    const allowed = condVal.split('|');
 
-  // checkbox : vérifie si la valeur est dans le tableau
-  if (Array.isArray(answer)) {
-    return answer.includes(condVal);
-  }
-  return answer === condVal;
+    if (Array.isArray(answer)) {
+      return allowed.some(v => answer.includes(v));
+    }
+    return allowed.includes(answer);
+  });
 }
 
 // ── Pré-remplissage automatique ──────────────────────────────
@@ -777,6 +964,8 @@ function syncInputValue(id, value) {
 
 // ── Calcul du budget ─────────────────────────────────────────
 function calculateAndRender() {
+  if (!state.calculated) return;
+
   const a = state.answers;
   const items = [];
 
@@ -830,20 +1019,29 @@ function renderResults(items) {
 
   setText('total-invest', items.length ? fmt(totalInvest) : '— €');
   setText('total-annual', items.length ? fmt(totalAnnual) : '— €');
-  setText('total-grand',  items.length ? fmt(grand)       : '— €');
-  setText('budget-bar-amount', items.length ? fmt(grand)  : '— €');
 
-  // Pulse animation
+  // Animate grand total counter
+  const grandEl = document.getElementById('total-grand');
   const barEl = document.getElementById('budget-bar-amount');
-  if (barEl) {
-    barEl.classList.remove('pulse');
-    void barEl.offsetWidth; // force reflow
-    barEl.classList.add('pulse');
+  if (items.length) {
+    if (grandEl) animateCounter(grandEl, 0, grand, 1400);
+    if (barEl) animateCounter(barEl, 0, grand, 1400);
+  } else {
+    setText('total-grand', '— €');
+    setText('budget-bar-amount', '— €');
   }
+
+  // Retirer l'état en attente
+  const totalsPanel = document.getElementById('totals-panel');
+  if (totalsPanel) totalsPanel.classList.remove('results-pending');
 
   // ── Tableau ───────────────────────────────────────────────
   renderTable(invest, annual, fmt);
 
+  // Programmer la pop-up de don
+  if (grand > 0) {
+    setTimeout(() => showDonationPopup(grand), 1500);
+  }
 }
 
 function setText(id, text) {
@@ -870,8 +1068,11 @@ function renderTable(invest, annual, fmt) {
     tbody.appendChild(tr);
   };
 
+  let rowIdx = 0;
   const addRow = (item) => {
     const tr = document.createElement('tr');
+    tr.style.setProperty('--row-index', rowIdx++);
+    tr.classList.add('table-row-reveal');
     if (item.description) tr.dataset.tip = item.description;
 
     const multiplierInfo = item.multiplier > 1
@@ -952,30 +1153,285 @@ function escapeHtml(str) {
 // ── Démarrage ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', init);
 
+// ── Segmented binary control (Oui / Non) ─────────────────────
+function buildSegmentedBinary(q) {
+  const wrap = document.createElement('div');
+  wrap.className = 'seg-control';
+  const selected = state.answers[q.id];
+  const selIdx = selected !== undefined && selected !== null
+    ? q.options.findIndex(o => o.value === selected)
+    : -1;
+  if (selIdx >= 0) wrap.dataset.selIdx = String(selIdx);
+
+  const indicator = document.createElement('div');
+  indicator.className = 'seg-indicator';
+  wrap.appendChild(indicator);
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'seg-btn' + (selected === opt.value ? ' seg-btn--active' : '');
+    btn.textContent = opt.label;
+    btn.dataset.value = opt.value;
+    btn.setAttribute('aria-pressed', selected === opt.value ? 'true' : 'false');
+    btn.addEventListener('click', () => {
+      wrap.dataset.selIdx = String(i);
+      wrap.querySelectorAll('.seg-btn').forEach((b, bi) => {
+        b.classList.toggle('seg-btn--active', bi === i);
+        b.setAttribute('aria-pressed', bi === i ? 'true' : 'false');
+      });
+      handleAnswer(q.id, opt.value);
+    });
+    wrap.appendChild(btn);
+  });
+  return wrap;
+}
+
+// ── Bouton Continuer (number / endurance) ─────────────────────
+function buildContinueBtn(q) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'question-continue-btn';
+  btn.innerHTML = 'Continuer <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  btn.addEventListener('click', () => {
+    state.touchedIds.add(q.id);
+    updateReveal();
+  });
+  return btn;
+}
+
+// ── Questions progressives ────────────────────────────────────
+function getVisibleQuestions() {
+  return state.questions.filter(q => isQuestionVisible(q));
+}
+
+function isQuestionAnswered(q) {
+  if (q.type === 'number' || q.type === 'endurance') {
+    return state.touchedIds.has(q.id);
+  }
+  const val = state.answers[q.id];
+  if (q.type === 'checkbox') return Array.isArray(val) && val.length > 0;
+  return val !== null && val !== undefined && val !== '';
+}
+
+function updateReveal() {
+  const visible = getVisibleQuestions();
+  const visibleIds = new Set(visible.map(q => q.id));
+
+  // Verrouiller les cartes qui ne sont plus visibles
+  for (const q of state.questions) {
+    if (!visibleIds.has(q.id)) {
+      const card = document.getElementById(`card-${q.id}`);
+      if (card && !card.classList.contains('card-locked')) {
+        card.classList.add('card-locked');
+        card.classList.remove('card-unlocked', 'card-reveal');
+      }
+    }
+  }
+
+  // Calculer jusqu'où déverrouiller :
+  // Q[0] toujours visible ; Q[i] visible si Q[i-1] répondu
+  let unlockUpTo = 0;
+  for (let i = 0; i < visible.length - 1; i++) {
+    if (isQuestionAnswered(visible[i])) {
+      unlockUpTo = i + 1;
+    } else {
+      break;
+    }
+  }
+
+  // Déverrouiller les cartes 0..unlockUpTo
+  for (let i = 0; i <= unlockUpTo; i++) {
+    const q = visible[i];
+    const card = document.getElementById(`card-${q.id}`);
+    if (!card) continue;
+
+    if (card.classList.contains('card-locked')) {
+      card.classList.remove('card-locked');
+      card.classList.add('card-unlocked', 'card-reveal');
+      if (i > 0) {
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
+      }
+      setTimeout(() => card.classList.remove('card-reveal'), 700);
+    } else {
+      card.classList.add('card-unlocked');
+    }
+  }
+
+  updateCalculateButton(visible);
+}
+
+function updateCalculateButton(visible) {
+  const btn = document.getElementById('btn-calculate');
+  const progressText = document.getElementById('calculate-progress-text');
+  const progressFill = document.getElementById('calculate-progress-fill');
+  if (!btn) return;
+
+  const answered = visible.filter(q => isQuestionAnswered(q)).length;
+  const total = visible.length;
+  const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+
+  if (progressFill) progressFill.style.width = pct + '%';
+
+  if (answered === total && total > 0) {
+    btn.disabled = false;
+    if (progressText) progressText.textContent = 'Toutes les questions sont complétées !';
+  } else {
+    btn.disabled = true;
+    if (progressText) {
+      if (answered === 0) {
+        progressText.textContent = 'Commence par répondre à la première question';
+      } else {
+        const remaining = total - answered;
+        progressText.textContent = `${answered}/${total} — encore ${remaining} question${remaining > 1 ? 's' : ''} à compléter`;
+      }
+    }
+  }
+}
+
+// ── Counter animé ─────────────────────────────────────────────
+function animateCounter(el, start, end, duration) {
+  if (!el) return;
+  const fmt = n => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+  const startTime = performance.now();
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = start + (end - start) * eased;
+    el.textContent = fmt(current);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = fmt(end);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Pop-up don ────────────────────────────────────────────────
+function showDonationPopup(grand) {
+  if (sessionStorage.getItem('mbc-donation-seen')) return;
+  sessionStorage.setItem('mbc-donation-seen', '1');
+
+  const overlay = document.getElementById('donation-overlay');
+  if (!overlay) return;
+
+  const amtEl = document.getElementById('donation-amount');
+  const donationAmt = grand * 0.01;
+  const fmt = n => n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+
+  overlay.hidden = false;
+  if (amtEl) {
+    amtEl.textContent = fmt(0);
+    setTimeout(() => animateCounter(amtEl, 0, donationAmt, 1000), 300);
+  }
+
+  const closeFn = () => { overlay.hidden = true; };
+  const closeBtn = document.getElementById('donation-close');
+  const skipBtn = document.getElementById('donation-skip');
+  if (closeBtn) closeBtn.addEventListener('click', closeFn);
+  if (skipBtn) skipBtn.addEventListener('click', closeFn);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeFn(); });
+}
+
+// ── IntersectionObserver (scroll animations) ──────────────────
+function setupIntersectionObserver() {
+  if (!('IntersectionObserver' in window)) return;
+
+  const simSection = document.getElementById('simulator');
+  if (simSection) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('sim-revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    obs.observe(simSection);
+  }
+
+  // About sections reveal (if on about.html)
+  document.querySelectorAll('.about-section').forEach((section, i) => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('section-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    obs.observe(section);
+  });
+}
+
 // ── Tooltip produit ─────────────────────────────────────────────────────────
 function initTooltip() {
   const tip = document.getElementById('tooltip');
   const table = document.getElementById('detail-table');
   if (!tip || !table) return;
 
+  let rafId = null;
+
+  const showTip = (text, cx, cy) => {
+    tip.textContent = text;
+    tip.hidden = false;
+    // Position after un-hiding so getBoundingClientRect is valid
+    requestAnimationFrame(() => {
+      const TW = tip.offsetWidth;
+      const TH = tip.offsetHeight;
+      const GAP = 14;
+      const VW = window.innerWidth;
+      const VH = window.innerHeight;
+
+      let x = cx + GAP;
+      let y = cy - TH / 2;
+
+      // Flip left if overflows right
+      if (x + TW + 8 > VW) x = cx - TW - GAP;
+      // Clamp top/bottom
+      y = Math.max(8, Math.min(y, VH - TH - 8));
+
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+      tip.classList.add('tooltip--visible');
+    });
+  };
+
+  const hideTip = () => {
+    tip.classList.remove('tooltip--visible');
+    // Wait for fade-out then really hide
+    setTimeout(() => { tip.hidden = true; }, 150);
+  };
+
   table.addEventListener('mouseover', (e) => {
     const tr = e.target.closest('tr[data-tip]');
-    if (!tr) { tip.hidden = true; return; }
-    tip.textContent = tr.dataset.tip;
-    tip.hidden = false;
+    if (!tr) { hideTip(); return; }
+    showTip(tr.dataset.tip, e.clientX, e.clientY);
   });
 
   table.addEventListener('mousemove', (e) => {
-    if (!tip.hidden) {
-      const x = Math.min(e.clientX + 16, window.innerWidth - 380);
-      tip.style.left = x + 'px';
-      tip.style.top = (e.clientY - 34) + 'px';
+    if (tip.classList.contains('tooltip--visible')) {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const TW = tip.offsetWidth;
+        const TH = tip.offsetHeight;
+        const GAP = 14;
+        const VW = window.innerWidth;
+        const VH = window.innerHeight;
+
+        let x = e.clientX + GAP;
+        let y = e.clientY - TH / 2;
+        if (x + TW + 8 > VW) x = e.clientX - TW - GAP;
+        y = Math.max(8, Math.min(y, VH - TH - 8));
+
+        tip.style.left = x + 'px';
+        tip.style.top  = y + 'px';
+      });
     }
   });
 
-  table.addEventListener('mouseleave', () => {
-    tip.hidden = true;
-  });
+  table.addEventListener('mouseleave', hideTip);
 }
 
 
