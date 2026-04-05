@@ -388,12 +388,10 @@ function nbEndurance(a, duree) {
   return parseInt(raw, 10) || 0;
 }
 
-// ── Gamme toggle (barre sticky) ──────────────────────────────────
+// ── Gamme toggle ──────────────────────────────────────────────────
 
-/** Affiche la barre budget */
 function updateGammeUI() {
-  const bar = document.getElementById('budget-bar');
-  if (bar) bar.classList.add('budget-bar--visible');
+  // noop — budget bar removed
 }
 
 // ── Debounce ────────────────────────────────────────────────
@@ -446,11 +444,6 @@ function init() {
         // Réinitialiser la modale pour ce nouveau calcul
         sessionStorage.removeItem('mbc-donation-seen');
 
-        const barEl = document.getElementById('budget-bar');
-        if (barEl) {
-          barEl.classList.remove('budget-bar--pending');
-          barEl.classList.add('budget-bar--visible');
-        }
         calculateAndRender();
 
         const detail = document.querySelector('.detail-fullwidth');
@@ -480,10 +473,7 @@ function init() {
   // 8. Observer scroll pour animations
   setupIntersectionObserver();
 
-  // 9. Dark mode
-  initTheme();
-
-  // 10. Tooltip sur le tableau
+  // 9. Tooltip sur le tableau
   initTooltip();
 }
 
@@ -944,13 +934,14 @@ function renderResults(items) {
 
   // Animate grand total counter
   const grandEl = document.getElementById('total-grand');
-  const barEl = document.getElementById('budget-bar-amount');
+  const investEl = document.getElementById('total-invest');
+  const annualEl = document.getElementById('total-annual');
   if (items.length) {
     if (grandEl) animateCounter(grandEl, 0, grand, 1400);
-    if (barEl) animateCounter(barEl, 0, grand, 1400);
+    if (investEl) animateCounter(investEl, 0, totalInvest, 1000);
+    if (annualEl) animateCounter(annualEl, 0, totalAnnual, 1000);
   } else {
     setText('total-grand', '— €');
-    setText('budget-bar-amount', '— €');
   }
 
   // Retirer l'état en attente
@@ -1055,35 +1046,6 @@ function renderTable(invest, annual, fmt) {
     annual.forEach(addRow);
   }
 
-  // Grand total
-  const allItems = [...invest, ...annual];
-  const grand = allItems.reduce((s, i) => s + i.montant, 0);
-  const trTotal = document.createElement('tr');
-  trTotal.className = 'row-grand-total';
-  trTotal.innerHTML = `
-    <td colspan="3" style="font-weight:600">Budget Année 1</td>
-    <td class="col-amount td-amount">${fmt(grand)}</td>
-    <td></td>
-  `;
-  tbody.appendChild(trTotal);
-}
-
-// ── Theme ────────────────────────────────────────────────────
-function initTheme() {
-  const saved = localStorage.getItem('mbc-theme');
-  if (saved === 'dark') {
-    document.body.classList.add('dark');
-  }
-
-  const btn = document.getElementById('theme-toggle');
-  if (btn) {
-    btn.addEventListener('click', toggleTheme);
-  }
-}
-
-function toggleTheme() {
-  const isDark = document.body.classList.toggle('dark');
-  localStorage.setItem('mbc-theme', isDark ? 'dark' : 'light');
 }
 
 // ── Utilitaires ──────────────────────────────────────────────

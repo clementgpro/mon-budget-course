@@ -1,6 +1,5 @@
 /* ============================================================
    Mon Budget Course — style.css
-   Thème clair par défaut + toggle dark via body.dark
    Polices : Barlow Condensed (titres) · Barlow (corps) · DM Mono (chiffres)
    ============================================================ */
 
@@ -33,26 +32,6 @@
   --transition:   220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body.dark {
-  --bg:           #0F0F0E;
-  --bg-alt:       #171714;
-  --surface:      #1C1B18;
-  --surface-2:    #242320;
-  --border:       #2E2C28;
-  --border-light: #262420;
-
-  --accent:       #E8230F;
-  --accent-dim:   #CC1100;
-  --accent-light: #2A0B08;
-
-  --text:         #F0ECE4;
-  --text-muted:   #908A80;
-  --text-faint:   #504C46;
-
-  --shadow-sm:    0 1px 3px rgba(0,0,0,.3);
-  --shadow-md:    0 4px 20px rgba(0,0,0,.4);
-}
-
 /* ── Reset & base ───────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -70,37 +49,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  transition: background var(--transition), color var(--transition);
   -webkit-font-smoothing: antialiased;
-}
-
-/* ── Theme toggle ───────────────────────────────────────────── */
-#theme-toggle {
-  position: fixed;
-  top: 16px;
-  right: 20px;
-  z-index: 200;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-size: 15px;
-  line-height: 1;
-  box-shadow: var(--shadow-sm);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-#theme-toggle:hover {
-  box-shadow: var(--shadow-md);
-}
-
-body:not(.dark) .icon-moon,
-body.dark .icon-sun {
-  display: none;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -129,11 +78,6 @@ body.dark .icon-sun {
   object-fit: cover;
   opacity: 0.16;
   filter: saturate(0.5);
-}
-
-body.dark .landing-hero-bg img {
-  opacity: 0.28;
-  filter: saturate(0.4) brightness(0.7);
 }
 
 .landing-hero-bg.no-img img { display: none; }
@@ -462,11 +406,6 @@ body.dark .landing-hero-bg img {
   box-shadow: var(--shadow-md);
 }
 
-/* Restore fixed theme toggle on about page */
-.about-top-bar #theme-toggle {
-  position: static;
-}
-
 /* ═══════════════════════════════════════════════════════════
    SIMULATEUR
 ═══════════════════════════════════════════════════════════ */
@@ -476,65 +415,6 @@ body.dark .landing-hero-bg img {
   min-height: 100vh;
   padding-bottom: 80px;
   transition: background var(--transition);
-}
-
-/* ── Sticky budget bar ──────────────────────────────────────── */
-#budget-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
-  transition: opacity 0.35s ease, transform 0.35s ease, background var(--transition), border-color var(--transition);
-}
-
-#budget-bar.budget-bar--visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.budget-bar-inner {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 10px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.budget-bar-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-  transition: opacity 0.3s;
-}
-
-/* Griser seulement le montant quand pas encore calculé */
-#budget-bar.budget-bar--pending .budget-bar-right {
-  opacity: 0.38;
-}
-
-.budget-bar-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.budget-bar-amount {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--accent);
-  transition: color var(--transition);
 }
 
 /* ── Switch éco/premium dans le tableau ───────────────────── */
@@ -1098,18 +978,91 @@ body.dark .landing-hero-bg img {
   font-style: italic;
 }
 
-/* ── Total dans le tableau ──────────────────────────────────── */
-#detail-table tr.row-grand-total td {
-  border-top: 2px solid var(--border);
-  font-weight: 600;
-  font-size: 0.9rem;
-  background: var(--surface) !important;
+/* ═══════════════════════════════════════════════════════════
+   HERO TOTAL BLOCK
+═══════════════════════════════════════════════════════════ */
+.total-hero {
+  margin-top: 48px;
+  padding: 48px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
-#detail-table tr.row-grand-total .td-amount {
+.total-hero-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+
+.total-hero-amount {
   font-family: var(--font-mono);
+  font-size: clamp(3rem, 9vw, 5.5rem);
+  font-weight: 500;
+  line-height: 1;
   color: var(--accent);
-  font-size: 1rem;
+  letter-spacing: -0.02em;
+  transition: color var(--transition);
+}
+
+.total-hero-breakdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+}
+
+.total-hero-breakdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.total-hero-breakdown-key {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+
+.total-hero-breakdown-val {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.total-hero-breakdown-sep {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--border);
+  line-height: 1;
+  padding-top: 18px;
+}
+
+@media (max-width: 480px) {
+  .total-hero {
+    padding: 36px 24px;
+  }
+  .total-hero-breakdown {
+    gap: 16px 16px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1215,15 +1168,6 @@ body.dark .landing-hero-bg img {
   box-shadow: var(--shadow-md);
 }
 
-@keyframes pulseBudget {
-  0%, 100% { transform: scale(1); }
-  40%       { transform: scale(1.07); color: var(--accent-dim); }
-}
-
-.budget-bar-amount.pulse {
-  animation: pulseBudget 0.35s ease;
-}
-
 /* ═══════════════════════════════════════════════════════════
    TOOLTIP PRODUIT
 ═══════════════════════════════════════════════════════════ */
@@ -1257,10 +1201,6 @@ body.dark .landing-hero-bg img {
   display: none;
 }
 
-body.dark #tooltip {
-  box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.3);
-}
-
 /* ═══════════════════════════════════════════════════════════
    FOOTER
 ═══════════════════════════════════════════════════════════ */
@@ -1283,6 +1223,220 @@ body.dark #tooltip {
 .footer-note {
   font-size: 0.78rem !important;
   color: var(--text-faint) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTRO — FEUX DE DÉPART
+═══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  #intro-overlay { display: none !important; }
+}
+
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.intro-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: #0C0B09;
+  transition: transform 0.72s cubic-bezier(0.76, 0, 0.24, 1);
+  overflow: hidden;
+}
+
+/* Ghost text watermark */
+.intro-panel::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(4rem, 12vw, 13rem);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #fff;
+  opacity: 0.045;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Scanlines texture */
+.intro-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.016) 2px,
+    rgba(255,255,255,0.016) 4px
+  );
+  pointer-events: none;
+}
+
+.intro-panel-l {
+  left: 0;
+}
+.intro-panel-l::before {
+  right: -15%;
+}
+
+.intro-panel-r {
+  right: 0;
+}
+.intro-panel-r::before {
+  left: -15%;
+}
+
+/* Vertical red divider */
+.intro-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #CC1100;
+  box-shadow:
+    0 0 14px 4px rgba(204,17,0,0.75),
+    0 0 50px 14px rgba(204,17,0,0.28);
+  z-index: 2;
+  transition: opacity 0.18s ease;
+}
+
+/* Central block */
+.intro-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  transition: opacity 0.18s ease;
+}
+
+.intro-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.38em;
+  color: rgba(255,255,255,0.3);
+  animation: introPulse 1.5s ease infinite;
+}
+
+@keyframes introPulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.72; }
+}
+
+/* Lights panel */
+.intro-lights-housing {
+  background: #141210;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.intro-lights-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.intro-light {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #1C0905;
+  border: 2px solid rgba(180,20,0,0.2);
+  position: relative;
+  transition: background 0.1s ease, box-shadow 0.1s ease, border-color 0.1s ease;
+}
+
+/* Reflection glint */
+.intro-light::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 12px;
+  width: 11px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.09);
+  transition: background 0.1s ease;
+}
+
+.intro-light.on {
+  background: #CC1100;
+  border-color: #E83520;
+  box-shadow:
+    0 0 10px 3px rgba(204,17,0,0.95),
+    0 0 36px 10px rgba(204,17,0,0.55),
+    0 0 72px 28px rgba(204,17,0,0.2),
+    inset 0 1px 0 rgba(255,110,90,0.45);
+}
+.intro-light.on::after {
+  background: rgba(255,255,255,0.38);
+}
+
+.intro-light.flash {
+  background: #FF5540;
+  border-color: #FF8870;
+  box-shadow:
+    0 0 22px 8px rgba(255,85,64,1),
+    0 0 65px 24px rgba(255,85,64,0.8),
+    0 0 130px 55px rgba(255,85,64,0.38),
+    inset 0 1px 0 rgba(255,210,200,0.5);
+}
+
+.intro-light.off {
+  background: #0E0603;
+  border-color: rgba(180,20,0,0.08);
+  box-shadow: none;
+}
+.intro-light.off::after {
+  background: rgba(255,255,255,0.03);
+}
+
+/* — GO: panels split apart — */
+#intro-overlay.go .intro-panel-l {
+  transform: translateX(-100%);
+}
+#intro-overlay.go .intro-panel-r {
+  transform: translateX(100%);
+}
+#intro-overlay.go .intro-divider,
+#intro-overlay.go .intro-center {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+  .intro-lights-housing {
+    padding: 14px 16px;
+  }
+  .intro-light {
+    width: 42px;
+    height: 42px;
+  }
+  .intro-lights-row {
+    gap: 10px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1331,16 +1485,6 @@ body.dark #tooltip {
     grid-template-columns: 1fr;
   }
 
-  .budget-bar-inner {
-    padding: 8px 16px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .budget-bar-amount {
-    font-size: 1.05rem;
-  }
-
   .gamme-btn {
     padding: 4px 10px;
     font-size: 0.78rem;
@@ -1362,11 +1506,6 @@ body.dark #tooltip {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
-  transition: background var(--transition), border-color var(--transition);
-}
-
-body.dark #site-nav {
-  background: rgba(15, 15, 14, 0.88);
 }
 
 .nav-inner {
@@ -1644,10 +1783,6 @@ body.dark #site-nav {
   opacity: 0.9;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   BUDGET BAR — ÉTAT INITIAL MASQUÉ
-═══════════════════════════════════════════════════════════ */
-/* budget-bar visibility handled in base rule above */
 
 /* ═══════════════════════════════════════════════════════════
    DETAIL TABLE — MASQUÉE JUSQU'AU CALCUL

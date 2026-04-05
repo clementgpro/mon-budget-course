@@ -15,14 +15,28 @@
 <body>
 
   <!-- ═══════════════════════════════════════════════════════
-       BOUTON DARK MODE
+       INTRO — FEUX DE DÉPART
   ══════════════════════════════════════════════════════════ -->
-  <button id="theme-toggle" aria-label="Basculer le thème sombre / clair" title="Thème sombre / clair">
-    <span class="icon-sun">☀</span>
-    <span class="icon-moon">☾</span>
-  </button>
+  <div id="intro-overlay" aria-hidden="true">
+    <div class="intro-panel intro-panel-l" data-text="MON BUDGET"></div>
+    <div class="intro-panel intro-panel-r" data-text="COURSE"></div>
+    <div class="intro-divider"></div>
+    <div class="intro-center">
+      <div class="intro-eyebrow">Prêt ?</div>
+      <div class="intro-lights-housing">
+        <div class="intro-lights-row">
+          <div class="intro-light" id="ilight-1"></div>
+          <div class="intro-light" id="ilight-2"></div>
+          <div class="intro-light" id="ilight-3"></div>
+          <div class="intro-light" id="ilight-4"></div>
+          <div class="intro-light" id="ilight-5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════════════════════════════════
+
        SECTION 1 — LANDING
   ══════════════════════════════════════════════════════════ -->
   <section id="landing">
@@ -103,16 +117,6 @@
       <div class="sl sl-7"></div>
     </div>
 
-    <!-- Barre sticky avec budget en direct -->
-    <div id="budget-bar" class="budget-bar--pending">
-      <div class="budget-bar-inner">
-        <div class="budget-bar-right">
-          <span class="budget-bar-label">Budget estimé — Année 1</span>
-          <span id="budget-bar-amount" class="budget-bar-amount">— €</span>
-        </div>
-      </div>
-    </div>
-
     <div class="simulator-layout">
 
       <!-- Colonne questions -->
@@ -168,6 +172,24 @@
           </div>
           <p class="table-note">* Les montants marqués « estimation » sont basés sur notre expérience et peuvent varier.</p>
         </div>
+
+        <!-- HERO TOTAL -->
+        <div class="total-hero" id="total-hero">
+          <div class="total-hero-label">Budget Année 1</div>
+          <div class="total-hero-amount" id="total-grand">— €</div>
+          <div class="total-hero-breakdown">
+            <div class="total-hero-breakdown-item">
+              <span class="total-hero-breakdown-key">Investissement initial</span>
+              <span class="total-hero-breakdown-val" id="total-invest">—</span>
+            </div>
+            <div class="total-hero-breakdown-sep">+</div>
+            <div class="total-hero-breakdown-item">
+              <span class="total-hero-breakdown-key">Coûts annuels</span>
+              <span class="total-hero-breakdown-val" id="total-annual">—</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -213,5 +235,49 @@
   </div>
 
   <script src="../app.js"></script>
+
+  <!-- ═══════════════════════════════════════════════════════
+       INTRO — SÉQUENCE FEUX
+  ══════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    var overlay = document.getElementById('intro-overlay');
+    if (!overlay) return;
+    // Une seule fois par session
+    if (sessionStorage.getItem('intro-done')) { overlay.remove(); return; }
+    // Respecter prefers-reduced-motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { overlay.remove(); return; }
+    sessionStorage.setItem('intro-done', '1');
+
+    // Bloquer le scroll pendant l'intro
+    document.body.style.overflow = 'hidden';
+
+    var lights = [1,2,3,4,5].map(function(i) { return document.getElementById('ilight-' + i); });
+
+    // Allumer les feux un à un toutes les 280 ms, départ à 500 ms
+    [500, 780, 1060, 1340, 1620].forEach(function(d, i) {
+      setTimeout(function() { lights[i].classList.add('on'); }, d);
+    });
+
+    // Flash simultané à 2000 ms
+    setTimeout(function() {
+      lights.forEach(function(l) { l.classList.add('flash'); });
+    }, 2000);
+
+    // Extinction à 2080 ms
+    setTimeout(function() {
+      lights.forEach(function(l) { l.classList.remove('on', 'flash'); l.classList.add('off'); });
+    }, 2080);
+
+    // Ouverture des panneaux à 2220 ms
+    setTimeout(function() { overlay.classList.add('go'); }, 2220);
+
+    // Suppression + déblocage scroll à 3060 ms
+    setTimeout(function() {
+      overlay.remove();
+      document.body.style.overflow = '';
+    }, 3060);
+  })();
+  </script>
 </body>
 </html>
