@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>À propos — Le Compte-Tours</title>
+  <meta name="description" content="La genèse du Compte-Tours : le premier simulateur de budget sport automobile conçu par des pilotes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       BOUTONS FLOTTANTS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-top-bar">
+    <a href="index.html" class="about-back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Retour au simulateur
+    </a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════ -->
+  <section id="about-hero">
+
+    <!-- Overlay -->
+    <div class="landing-hero-overlay" style="background: linear-gradient(to bottom, transparent 0%, var(--bg) 90%)"></div>
+
+    <div class="about-hero-content">
+      <span class="about-hero-tag">Édition 2026 · Notre histoire</span>
+      <h1>Le Compte-<br /><em>Tours</em></h1>
+      <p class="about-hero-sub">Derrière chaque budget maîtrisé, un pilote qui a appris à lire ses gauges.</p>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       GENÈSE DU PROJET
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-section">
+    <div class="about-section-tag">Pourquoi ce projet</div>
+    <h2>La question que personne<br/>ne pose vraiment</h2>
+    <p>
+      En sport automobile, personne ne parle vraiment budget. Les forums sont vagues, les teams peu bavards, et la question
+      <strong>« Ça coûte combien, vraiment ? »</strong> reste presque toujours sans réponse honnête.
+    </p>
+    <p>
+      Le Compte-Tours est né de là.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       LES CRÉATEURS
+  ══════════════════════════════════════════════════════════ -->
+  <div class="about-section">
+    <div class="about-section-tag">Les créateurs</div>
+    <h2>Deux pilotes</h2>
+    <p>
+      Les données viennent du terrain : factures réelles, devis de teams, tarifs observés sur circuit.
+    </p>
+
+    <div class="about-pilots">
+
+      <div class="about-pilot-card">
+        <div class="about-pilot-avatar">
+          <img src="../img/CG.jpg" alt="Clément Guet"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="about-pilot-initial" style="display:none">CG</div>
+        </div>
+        <div class="about-pilot-name">Clément Guet</div>
+        <div class="about-pilot-role">Pilote karting<br />Championnat de France 2025 · Ligue BPL</div>
+      </div>
+
+      <div class="about-pilot-card">
+        <div class="about-pilot-avatar">
+          <img src="../img/GM.jpg" alt="Guillaume Mas"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="about-pilot-initial" style="display:none">GM</div>
+        </div>
+        <div class="about-pilot-name">Guillaume Mas</div>
+        <div class="about-pilot-role">Lauréat d'un volant<br />Ligier JS2 R · 208 Rally Cup</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════ -->
+  <footer id="site-footer">
+    <div class="footer-links">
+      <a href="index.html" class="footer-link">Simulateur</a>
+      <span class="footer-sep">·</span>
+      <a href="about.html" class="footer-link footer-link--active">À propos</a>
+    </div>
+    <p>Le Compte-Tours — édition 2026 · Conçu par Clément Guet &amp; Guillaume Mas</p>
+    <p class="footer-note">Les estimations sont basées sur notre expérience personnelle et les prix observés en 2025–2026. Ce simulateur n'a pas de valeur contractuelle.</p>
+  </footer>
+
+  <script>
+    (function () {
+      // IntersectionObserver for about sections
+      document.addEventListener('DOMContentLoaded', function () {
+        if ('IntersectionObserver' in window) {
+          document.querySelectorAll('.about-section').forEach(function (section) {
+            var obs = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('section-visible');
+                  obs.unobserve(entry.target);
+                }
+              });
+            }, { threshold: 0.12 });
+            obs.observe(section);
+          });
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

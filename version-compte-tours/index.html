@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Compte-Tours — Simulateur de budget karting</title>
+  <meta name="description" content="Estimez votre budget karting ou auto compétition. Un outil conçu par des pilotes, pour des pilotes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Données embarquées — aucun serveur requis -->
+  <script src="../data/data.js"></script>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+
+       SECTION 1 — LANDING
+  ══════════════════════════════════════════════════════════ -->
+  <section id="landing">
+
+    <!-- Hero background image -->
+    <div class="landing-hero-bg">
+      <img src="../img/hero.jpg" alt="" onerror="this.parentElement.classList.add('no-img')" />
+      <div class="landing-hero-overlay"></div>
+    </div>
+
+    <!-- Bandes timing décoratives -->
+    <div class="timing-bands" aria-hidden="true">
+      <div class="tb tb-1"></div>
+      <div class="tb tb-2"></div>
+      <div class="tb tb-3"></div>
+    </div>
+
+    <div class="landing-content">
+
+      <!-- Numéro watermark décoratif -->
+      <div class="hero-watermark" aria-hidden="true">01</div>
+
+      <div class="landing-header">
+        <span class="landing-tag">Édition 2026 · Karting &amp; Auto</span>
+        <h1>Le Compte-<br /><em>Tours</em></h1>
+        <p class="landing-subtitle">Calculez votre saison avec la précision d'un chrono. Des données de terrain, une simulation réelle.</p>
+      </div>
+
+      <div class="landing-pilots">
+        <div class="pilot-card">
+          <div class="pilot-avatar">
+            <img src="../img/cg.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <div class="pilot-initial" style="display:none">CG</div>
+          </div>
+          <div class="pilot-info">
+            <strong>Clément Guet</strong>
+            <span>Pilote karting · Championnat de France 2025</span>
+          </div>
+        </div>
+        <div class="pilot-card">
+          <div class="pilot-avatar">
+            <img src="../img/gm.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <div class="pilot-initial" style="display:none">GM</div>
+          </div>
+          <div class="pilot-info">
+            <strong>Guillaume Mas</strong>
+            <span>Lauréat d'un volant · Ligier &amp; 208 Cup</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-cta">
+        <div class="cta-buttons">
+          <button class="btn-primary" onclick="document.getElementById('simulator').scrollIntoView({behavior:'smooth'})">
+            Démarrer la simulation
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="btn-auto-soon" disabled aria-disabled="true">
+            Simuler en auto
+            <span class="badge-soon">À venir</span>
+          </button>
+        </div>
+        <a href="about.html" class="cta-about-link">En savoir plus sur le projet →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 2 — SIMULATEUR
+  ══════════════════════════════════════════════════════════ -->
+  <section id="simulator">
+
+    <div class="simulator-layout">
+
+      <!-- Colonne questions -->
+      <div class="simulator-questions">
+        <div class="sim-header">
+          <h2>Simulation karting</h2>
+          <p class="sim-hint">Réponds aux questions ci-dessous, une par une. Clique sur <strong>Calculer mon budget</strong> une fois toutes les questions complétées.</p>
+        </div>
+        <div id="questions-panel">
+          <!-- Questions générées par app.js -->
+          <div class="questions-loading">Chargement des questions…</div>
+        </div>
+
+        <!-- Bouton calcul + barre de progression -->
+        <div class="calculate-wrap" id="calculate-wrap">
+          <div class="calculate-progress">
+            <div class="calculate-progress-fill" id="calculate-progress-fill"></div>
+          </div>
+          <p class="calculate-progress-text" id="calculate-progress-text">Commence par répondre à la première question</p>
+          <button class="btn-calculate" id="btn-calculate" disabled>
+            Calculer mon budget
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M9 3v12M4 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tableau pleine largeur -->
+    <div class="detail-fullwidth detail-hidden">
+      <div class="detail-fullwidth-inner">
+        <div id="detail-section" class="results-section">
+          <h3 class="results-title">Votre relevé de saison</h3>
+          <div class="detail-table-wrapper">
+            <table id="detail-table">
+              <thead>
+                <tr>
+                  <th>Poste</th>
+                  <th>Description</th>
+                  <th class="col-type">Type</th>
+                  <th class="col-amount">Montant</th>
+                  <th class="col-gamme">Gamme</th>
+                </tr>
+              </thead>
+              <tbody id="detail-tbody">
+                <tr class="table-empty">
+                  <td colspan="5">Répondez aux questions pour voir le détail des dépenses.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">* Les montants marqués « estimation » sont basés sur notre expérience et peuvent varier.</p>
+        </div>
+
+        <!-- HERO TOTAL -->
+        <div class="total-hero" id="total-hero">
+          <div class="total-hero-label">Budget Année 1</div>
+          <div class="total-hero-amount" id="total-grand">— €</div>
+          <div class="total-hero-breakdown">
+            <div class="total-hero-breakdown-item">
+              <span class="total-hero-breakdown-key">Investissement initial</span>
+              <span class="total-hero-breakdown-val" id="total-invest">—</span>
+            </div>
+            <div class="total-hero-breakdown-sep">+</div>
+            <div class="total-hero-breakdown-item">
+              <span class="total-hero-breakdown-key">Coûts annuels</span>
+              <span class="total-hero-breakdown-val" id="total-annual">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════ -->
+  <footer id="site-footer">
+    <div class="footer-links">
+      <a href="index.html" class="footer-link footer-link--active">Simulateur</a>
+      <span class="footer-sep">·</span>
+      <a href="about.html" class="footer-link">À propos</a>
+    </div>
+    <p>Le Compte-Tours — édition 2026 · Conçu par Clément Guet &amp; Guillaume Mas</p>
+    <p class="footer-note">Les estimations sont basées sur notre expérience personnelle et les prix observés en 2025–2026. Ce simulateur n'a pas de valeur contractuelle.</p>
+  </footer>
+
+  <!-- Tooltip global -->
+  <div id="tooltip" hidden role="tooltip"></div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       MODALE DON
+  ══════════════════════════════════════════════════════════ -->
+  <div id="donation-overlay" class="donation-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="donation-title">
+    <div class="donation-modal">
+      <button class="donation-close" id="donation-close" aria-label="Fermer">&#x2715;</button>
+      <div class="donation-flag">🏁</div>
+      <h2 class="donation-title" id="donation-title">Vous avez votre budget.<br>Soutenez ceux qui l'ont <em>bâti</em>.</h2>
+      <p class="donation-body">Ces chiffres, Clément et Guillaume les ont rassemblés en courant eux-mêmes. Ce simulateur, c'est leur bénévolat — parce que le sport auto mérite davantage de transparence.</p>
+      <div class="donation-amount-block">
+        <div class="donation-amount" id="donation-amount">—</div>
+        <div class="donation-amount-desc">soit 1% de votre saison — pour en financer une autre</div>
+      </div>
+      <div class="donation-btns">
+        <a href="https://www.paypal.me/PLACEHOLDER" target="_blank" rel="noopener noreferrer" class="btn-donate" id="btn-donate">
+          Soutenir Clément &amp; Guillaume
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <button class="btn-donate-skip" id="donation-skip">Non merci, continuer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../app.js"></script>
+
+</body>
+</html>
