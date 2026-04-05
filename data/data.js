@@ -613,6 +613,13 @@ window.QUESTIONS_DATA = [
     group: "Compétition"
   },
   {
+    id: "nb_courses_ligue",
+    label: "Combien de courses en ligue dans l'année ?",
+    hint: "Courses comptant pour le championnat régional (ligue UFOLEP, ASA…). 4 par défaut pour une saison régionale.",
+    type: "number",
+    min: 0,
+    max: 20,
+    options: null,
     condition: "pratique=competition&perimetre=regional",
     prefill: null,
     defaultValue: 4,
@@ -630,7 +637,7 @@ window.QUESTIONS_DATA = [
       { value: "non", label: "Non — je roule avec mon propre matériel" }
     ],
     condition: "pratique=competition&budget=premium|personnalise",
-    prefill: null,
+    prefill: "budget=economique>team=non",
     defaultValue: null,
     group: "Compétition"
   },
