@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mon Budget Course — Simulateur karting</title>
-  <meta name="description" content="Estimez votre budget karting compétition ou loisir. Un outil gratuit conçu par des pilotes." />
+  <title>Mon Budget Course — Simulateur karting & auto</title>
+  <meta name="description" content="Estimez votre budget karting ou auto compétition. Un outil conçu par des pilotes, pour des pilotes." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <!-- Données embarquées — aucun serveur requis -->
-  <script src="data/data.js"></script>
+  <script src="../data/data.js"></script>
 </head>
 <body>
 
@@ -29,7 +29,7 @@
 
     <!-- Hero background image (place img/hero.jpg dans le dossier img/) -->
     <div class="landing-hero-bg">
-      <img src="img/hero.jpg" alt="" onerror="this.parentElement.classList.add('no-img')" />
+      <img src="../img/hero.jpg" alt="" onerror="this.parentElement.classList.add('no-img')" />
       <div class="landing-hero-overlay"></div>
     </div>
 
@@ -44,15 +44,15 @@
     <div class="landing-content">
 
       <div class="landing-header">
-        <span class="landing-tag">Édition 2026 · Karting</span>
+        <span class="landing-tag">Édition 2026 · Karting &amp; Auto</span>
         <h1>Mon Budget<br /><em>Course</em></h1>
-        <p class="landing-subtitle">Le simulateur de budget karting conçu par des pilotes, pour des pilotes.</p>
+        <p class="landing-subtitle">Le simulateur de budget course conçu par des pilotes, pour des pilotes.</p>
       </div>
 
       <div class="landing-pilots">
         <div class="pilot-card">
           <div class="pilot-avatar">
-            <img src="img/cg.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <img src="../img/cg.jpg" alt="Clément Guet" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
             <div class="pilot-initial" style="display:none">CG</div>
           </div>
           <div class="pilot-info">
@@ -62,7 +62,7 @@
         </div>
         <div class="pilot-card">
           <div class="pilot-avatar">
-            <img src="img/gm.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+            <img src="../img/gm.jpg" alt="Guillaume Mas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
             <div class="pilot-initial" style="display:none">GM</div>
           </div>
           <div class="pilot-info">
@@ -73,13 +73,18 @@
       </div>
 
       <div class="landing-cta">
-        <button class="btn-primary" onclick="document.getElementById('simulator').scrollIntoView({behavior:'smooth'})">
-          Commencer la simulation karting
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        <p class="cta-note">Gratuit · 100% local · Aucune donnée envoyée</p>
+        <div class="cta-buttons">
+          <button class="btn-primary" onclick="document.getElementById('simulator').scrollIntoView({behavior:'smooth'})">
+            Simuler en karting
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button class="btn-auto-soon" disabled aria-disabled="true">
+            Simuler en auto
+            <span class="badge-soon">À venir</span>
+          </button>
+        </div>
         <a href="about.html" class="cta-about-link">En savoir plus sur le projet →</a>
       </div>
 
@@ -101,10 +106,6 @@
     <!-- Barre sticky avec budget en direct -->
     <div id="budget-bar" class="budget-bar--pending">
       <div class="budget-bar-inner">
-        <div class="gamme-toggle" id="gamme-toggle" aria-label="Choisir la gamme">
-          <button type="button" class="gamme-btn" data-gamme="economique">Économique</button>
-          <button type="button" class="gamme-btn" data-gamme="premium">Premium</button>
-        </div>
         <div class="budget-bar-right">
           <span class="budget-bar-label">Budget estimé — Année 1</span>
           <span id="budget-bar-amount" class="budget-bar-amount">— €</span>
@@ -155,11 +156,12 @@
                   <th>Description</th>
                   <th class="col-type">Type</th>
                   <th class="col-amount">Montant</th>
+                  <th class="col-gamme">Gamme</th>
                 </tr>
               </thead>
               <tbody id="detail-tbody">
                 <tr class="table-empty">
-                  <td colspan="4">Répondez aux questions pour voir le détail des dépenses.</td>
+                  <td colspan="5">Répondez aux questions pour voir le détail des dépenses.</td>
                 </tr>
               </tbody>
             </table>
@@ -194,15 +196,15 @@
     <div class="donation-modal">
       <button class="donation-close" id="donation-close" aria-label="Fermer">&#x2715;</button>
       <div class="donation-flag">🏁</div>
-      <h2 class="donation-title" id="donation-title">Cet outil est <em>gratuit</em><br>grâce à Clément &amp; Guillaume</h2>
-      <p class="donation-body">Ils ont collecté ces données en participant eux-mêmes aux championnats. Ce simulateur repose sur leur travail bénévole — parce que le milieu du sport auto mérite plus de transparence.</p>
+      <h2 class="donation-title" id="donation-title">Vous avez votre budget.<br>Soutenez ceux qui l'ont <em>bâti</em>.</h2>
+      <p class="donation-body">Ces chiffres, Clément et Guillaume les ont rassemblés en courant eux-mêmes. Ce simulateur, c'est leur bénévolat — parce que le sport auto mérite davantage de transparence.</p>
       <div class="donation-amount-block">
         <div class="donation-amount" id="donation-amount">—</div>
-        <div class="donation-amount-desc">soit 1% de votre budget simulé · l'équivalent d'un plein d'essence</div>
+        <div class="donation-amount-desc">soit 1% de votre saison — pour en financer une autre</div>
       </div>
       <div class="donation-btns">
         <a href="https://www.paypal.me/PLACEHOLDER" target="_blank" rel="noopener noreferrer" class="btn-donate" id="btn-donate">
-          Soutenir la saison
+          Soutenir Clément &amp; Guillaume
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <button class="btn-donate-skip" id="donation-skip">Non merci, continuer</button>
@@ -210,6 +212,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="../app.js"></script>
 </body>
 </html>

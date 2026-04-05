@@ -390,70 +390,10 @@ function nbEndurance(a, duree) {
 
 // ── Gamme toggle (barre sticky) ──────────────────────────────────
 
-/** Affiche la barre, met à jour le bouton actif, rafraîchit les chips de prix */
-function updateGammeUI(value) {
+/** Affiche la barre budget */
+function updateGammeUI() {
   const bar = document.getElementById('budget-bar');
   if (bar) bar.classList.add('budget-bar--visible');
-
-  document.querySelectorAll('.gamme-btn').forEach(btn => {
-    btn.classList.toggle('gamme-btn--active', btn.dataset.gamme === value);
-  });
-
-  // Le choix global propage à tous les items (reset)
-  for (const hints of Object.values(PRICE_HINT_MAP)) {
-    state.answers[hints.gammeKey] = value;
-  }
-
-  updateAllPriceHints();
-}
-
-/** (Re)génère les chips de prix dans toutes les cartes concernées */
-function updateAllPriceHints() {
-  for (const [qId, hints] of Object.entries(PRICE_HINT_MAP)) {
-    const div = document.getElementById(`price-hint-${qId}`);
-    if (!div) continue;
-    // Gamme de cet item : choix individuel ou fallback sur le budget global
-    const itemGamme = state.answers[hints.gammeKey] || state.answers.budget;
-    renderPriceHint(div, hints, itemGamme);
-  }
-}
-
-/**
- * (Re)crée le contenu d'un .price-hint.
- * @param {HTMLElement} div - conteneur .price-hint
- * @param {{ eco: string, premium: string }} hints - clés COSTS_DATA
- * @param {string|undefined} activeBudget - 'economique' | 'premium' | undefined
- */
-function renderPriceHint(div, hints, activeBudget) {
-  div.innerHTML = '';
-  const fmt = n => n.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + '\u00a0\u20ac';
-
-  const chips = [
-    { gamme: 'economique', label: '\u00c9co.', costKey: hints.eco },
-    { gamme: 'premium',    label: 'Premium', costKey: hints.premium },
-  ];
-
-  for (const chip of chips) {
-    const row = state.costsIndex && state.costsIndex.get(chip.costKey);
-    if (!row) continue;
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'price-hint-chip' +
-      (activeBudget === chip.gamme ? ' price-hint-chip--active' : '');
-    btn.setAttribute('aria-pressed', activeBudget === chip.gamme ? 'true' : 'false');
-    btn.title = `Passer en gamme ${chip.label}`;
-    btn.innerHTML =
-      `<span class="chip-gamme">${escapeHtml(chip.label)}</span> ${escapeHtml(fmt(row.prix))}`;
-
-    btn.addEventListener('click', () => {
-      // Met à jour uniquement la gamme de cet item, pas le budget global
-      handleAnswer(hints.gammeKey, chip.gamme);
-      if (state.calculated) calculateAndRender();
-    });
-
-    div.appendChild(btn);
-  }
 }
 
 // ── Debounce ────────────────────────────────────────────────
@@ -507,7 +447,10 @@ function init() {
         sessionStorage.removeItem('mbc-donation-seen');
 
         const barEl = document.getElementById('budget-bar');
-        if (barEl) barEl.classList.remove('budget-bar--pending');
+        if (barEl) {
+          barEl.classList.remove('budget-bar--pending');
+          barEl.classList.add('budget-bar--visible');
+        }
         calculateAndRender();
 
         const detail = document.querySelector('.detail-fullwidth');
@@ -542,19 +485,6 @@ function init() {
 
   // 10. Tooltip sur le tableau
   initTooltip();
-
-  // 11. Gamme toggle : écouteurs sur les boutons sticky de la budget-bar
-  document.querySelectorAll('.gamme-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const gamme = btn.dataset.gamme;
-      syncInputValue('budget', gamme);
-      handleAnswer('budget', gamme);
-      if (state.calculated) calculateAndRender();
-    });
-  });
-
-  // 12. Remplir les chips de prix dès que costsIndex est prêt
-  updateAllPriceHints();
 }
 
 // ── Index des coûts ──────────────────────────────────────────
@@ -635,14 +565,6 @@ function buildQuestionCard(q) {
   }
   main.appendChild(ctrl);
   card.appendChild(main);
-
-  // Chips de prix éco/premium — pleine largeur sous le row
-  if (PRICE_HINT_MAP[q.id]) {
-    const hintDiv = document.createElement('div');
-    hintDiv.className = 'price-hint';
-    hintDiv.id = `price-hint-${q.id}`;
-    card.appendChild(hintDiv);
-  }
 
   return card;
 }
@@ -888,7 +810,7 @@ function buildEndurance(q) {
 // ── Gestion des réponses ─────────────────────────────────────
 function handleAnswer(id, value) {
   state.answers[id] = value;
-  if (id === 'budget') updateGammeUI(value);
+  if (id === 'budget') updateGammeUI();
   applyPrefills();
   updateReveal();
 }
@@ -1056,7 +978,7 @@ function renderTable(invest, annual, fmt) {
   if (invest.length === 0 && annual.length === 0) {
     const tr = document.createElement('tr');
     tr.className = 'table-empty';
-    tr.innerHTML = '<td colspan="4">Répondez aux questions pour voir le détail des dépenses.</td>';
+    tr.innerHTML = '<td colspan="5">Répondez aux questions pour voir le détail des dépenses.</td>';
     tbody.appendChild(tr);
     return;
   }
@@ -1064,7 +986,7 @@ function renderTable(invest, annual, fmt) {
   const addSectionHeader = (label) => {
     const tr = document.createElement('tr');
     tr.className = 'section-header';
-    tr.innerHTML = `<td colspan="4">${label}</td>`;
+    tr.innerHTML = `<td colspan="5">${label}</td>`;
     tbody.appendChild(tr);
   };
 
@@ -1093,7 +1015,31 @@ function renderTable(invest, annual, fmt) {
       </td>
       <td class="col-type"><span class="${badgeClass}">${typeLabel}</span></td>
       <td class="col-amount td-amount">${fmt(item.montant)}</td>
+      <td class="col-gamme"></td>
     `;
+
+    // Switch éco/premium pour les items applicables
+    const hintKey = item.ruleKey.startsWith('achat_') ? item.ruleKey.slice(6) : null;
+    const hints = hintKey ? PRICE_HINT_MAP[hintKey] : null;
+    if (hints) {
+      const isPremium = (state.answers[hints.gammeKey] || state.answers.budget || 'economique') === 'premium';
+      const switchBtn = document.createElement('button');
+      switchBtn.type = 'button';
+      switchBtn.className = 'gamme-switch' + (isPremium ? ' gamme-switch--on' : '');
+      switchBtn.setAttribute('aria-pressed', isPremium ? 'true' : 'false');
+      switchBtn.title = isPremium ? 'Basculer vers Économique' : 'Basculer vers Premium';
+      switchBtn.innerHTML = `
+        <span class="gamme-switch-track"><span class="gamme-switch-knob"></span></span>
+        <span class="gamme-switch-label">${isPremium ? 'Premium' : 'Éco'}</span>
+      `;
+      switchBtn.addEventListener('click', () => {
+        const cur = state.answers[hints.gammeKey] || state.answers.budget || 'economique';
+        state.answers[hints.gammeKey] = cur === 'premium' ? 'economique' : 'premium';
+        calculateAndRender();
+      });
+      tr.querySelector('.col-gamme').appendChild(switchBtn);
+    }
+
     tbody.appendChild(tr);
   };
 
@@ -1117,6 +1063,7 @@ function renderTable(invest, annual, fmt) {
   trTotal.innerHTML = `
     <td colspan="3" style="font-weight:600">Budget Année 1</td>
     <td class="col-amount td-amount">${fmt(grand)}</td>
+    <td></td>
   `;
   tbody.appendChild(trTotal);
 }
