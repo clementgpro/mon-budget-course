@@ -15,27 +15,6 @@
 <body>
 
   <!-- ═══════════════════════════════════════════════════════
-       INTRO — FEUX DE DÉPART
-  ══════════════════════════════════════════════════════════ -->
-  <div id="intro-overlay" aria-hidden="true">
-    <div class="intro-panel intro-panel-l" data-text="MON BUDGET"></div>
-    <div class="intro-panel intro-panel-r" data-text="COURSE"></div>
-    <div class="intro-divider"></div>
-    <div class="intro-center">
-      <div class="intro-eyebrow">Prêt ?</div>
-      <div class="intro-lights-housing">
-        <div class="intro-lights-row">
-          <div class="intro-light" id="ilight-1"></div>
-          <div class="intro-light" id="ilight-2"></div>
-          <div class="intro-light" id="ilight-3"></div>
-          <div class="intro-light" id="ilight-4"></div>
-          <div class="intro-light" id="ilight-5"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════
 
        SECTION 1 — LANDING
   ══════════════════════════════════════════════════════════ -->
@@ -53,6 +32,18 @@
       <div class="sl sl-2"></div>
       <div class="sl sl-3"></div>
       <div class="sl sl-4"></div>
+    </div>
+
+    <!-- Effets de fond motion -->
+    <div class="bg-effects" aria-hidden="true">
+      <div class="sparks-container">
+        <div class="spark sp-1"></div>
+        <div class="spark sp-2"></div>
+        <div class="spark sp-3"></div>
+        <div class="spark sp-4"></div>
+        <div class="spark sp-5"></div>
+        <div class="spark sp-6"></div>
+      </div>
     </div>
 
     <div class="landing-content">
@@ -234,48 +225,6 @@
 
   <script src="../app.js"></script>
 
-  <!-- ═══════════════════════════════════════════════════════
-       INTRO — SÉQUENCE FEUX
-  ══════════════════════════════════════════════════════════ -->
-  <script>
-  (function () {
-    var overlay = document.getElementById('intro-overlay');
-    if (!overlay) return;
-    // Une seule fois par session
-    if (sessionStorage.getItem('intro-done')) { overlay.remove(); return; }
-    // Respecter prefers-reduced-motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { overlay.remove(); return; }
-    sessionStorage.setItem('intro-done', '1');
 
-    // Bloquer le scroll pendant l'intro
-    document.body.style.overflow = 'hidden';
-
-    var lights = [1,2,3,4,5].map(function(i) { return document.getElementById('ilight-' + i); });
-
-    // Allumer les feux un à un toutes les 280 ms, départ à 500 ms
-    [500, 780, 1060, 1340, 1620].forEach(function(d, i) {
-      setTimeout(function() { lights[i].classList.add('on'); }, d);
-    });
-
-    // Flash simultané à 2000 ms
-    setTimeout(function() {
-      lights.forEach(function(l) { l.classList.add('flash'); });
-    }, 2000);
-
-    // Extinction à 2080 ms
-    setTimeout(function() {
-      lights.forEach(function(l) { l.classList.remove('on', 'flash'); l.classList.add('off'); });
-    }, 2080);
-
-    // Ouverture des panneaux à 2220 ms
-    setTimeout(function() { overlay.classList.add('go'); }, 2220);
-
-    // Suppression + déblocage scroll à 3060 ms
-    setTimeout(function() {
-      overlay.remove();
-      document.body.style.overflow = '';
-    }, 3060);
-  })();
-  </script>
 </body>
 </html>
