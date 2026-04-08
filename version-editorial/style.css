@@ -417,11 +417,12 @@ body {
   transition: background var(--transition);
 }
 
-/* ── Switch éco/premium dans le tableau ───────────────────── */
-.col-gamme {
-  width: 80px;
-  text-align: center;
-  white-space: nowrap;
+/* ── Toggle éco/premium — intégré dans la cellule Description ─ */
+
+/* Le toggle s'affiche en bloc sous le texte de description */
+.td-desc-text .gamme-switch {
+  display: flex;
+  margin-top: 5px;
 }
 
 .gamme-switch {
@@ -858,118 +859,200 @@ body {
 }
 
 /* ── Tableau détaillé ───────────────────────────────────────── */
+
+/*
+ * Pattern "scroll shadow" (Lea Verou) : les 4 background-image
+ * créent une ombre d'indication de défilement horizontal sans JS.
+ * background-attachment: local → suit le contenu (masqué au bord)
+ * background-attachment: scroll → fixe sur le conteneur (visible)
+ */
 .detail-table-wrapper {
+  position: relative;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius);
+  border: 1px solid var(--border);
   margin-bottom: 8px;
+  background:
+    linear-gradient(to right,  var(--surface) 20%, rgba(255,255,255,0)),
+    linear-gradient(to left,   var(--surface) 20%, rgba(255,255,255,0)) 100% 0,
+    radial-gradient(farthest-side at 0%   50%, rgba(0,0,0,.10), transparent),
+    radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.10), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 36px 100%, 36px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 #detail-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 560px;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.82rem;
+  background: var(--surface);
 }
 
+/* ── En-tête sticky ─────────────────────────────────────────── */
 #detail-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-faint);
   text-align: left;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--border);
+  padding: 9px 12px;
+  background: var(--bg-alt);
+  /* box-shadow remplace border pour éviter le conflit avec border-collapse:separate */
+  box-shadow: 0 2px 0 var(--border);
   white-space: nowrap;
+  user-select: none;
 }
 
+/* Coin supérieur gauche : au-dessus des deux axes sticky */
+#detail-table thead th.th-poste {
+  z-index: 3;
+}
+
+/* ── Cellules ───────────────────────────────────────────────── */
 #detail-table td {
-  padding: 9px 10px;
-  vertical-align: top;
+  padding: 9px 12px;
+  vertical-align: middle;
   border-bottom: 1px solid var(--border-light);
-  line-height: 1.4;
+  line-height: 1.45;
+  background: var(--surface);
+  transition: background 120ms ease;
 }
 
 #detail-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-#detail-table tbody tr:hover td {
-  background: var(--bg-alt);
-}
-
 #detail-table tbody tr:nth-child(even) td {
   background: var(--surface-2);
+}
+
+#detail-table tbody tr:hover td {
+  background: var(--bg-alt);
 }
 
 #detail-table tbody tr:nth-child(even):hover td {
   background: var(--bg-alt);
 }
 
-.col-type {
+/* ── Colonne Poste ──────────────────────────────────────────── */
+.td-category {
   white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
 }
 
+/* ── Colonne Description ────────────────────────────────────── */
+.td-desc {
+  color: var(--text);
+  min-width: 160px;
+}
+
+.td-desc-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.td-thumb-wrap {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.td-thumb-placeholder {
+  font-size: 1.35rem;
+  line-height: 1;
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+}
+
+.td-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 380ms ease;
+}
+
+.td-thumb.loaded {
+  opacity: 1;
+}
+
+.td-desc-text {
+  min-width: 0;
+  line-height: 1.5;
+}
+
+.td-source-link {
+  color: var(--text-faint);
+  font-size: .75rem;
+}
+
+.td-source-text {
+  color: var(--text-faint);
+  font-size: .75rem;
+}
+
+/* ── Colonne Montant ────────────────────────────────────────── */
 .col-amount {
   text-align: right;
   white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 500;
-}
-
-.td-category {
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  white-space: nowrap;
-}
-
-.td-desc {
-  color: var(--text);
-}
-
-.td-type-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 2px 7px;
-  border-radius: 99px;
-  background: var(--bg-alt);
-  color: var(--text-muted);
-  border: 1px solid var(--border-light);
-  white-space: nowrap;
-}
-
-.td-type-badge.badge-invest {
-  background: var(--accent-light);
-  color: var(--accent);
-  border-color: transparent;
+  width: 108px;
 }
 
 .td-amount {
   color: var(--text);
 }
 
-/* Séparateur de section dans le tableau */
+/* ── Séparateurs de section ─────────────────────────────────── */
 #detail-table tr.section-header td {
-  background: var(--bg-alt);
+  background: var(--text) !important;
+  color: var(--bg);
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-faint);
-  padding: 10px 10px 6px;
-  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.14em;
+  padding: 8px 12px;
+  border-bottom: none;
+  border-left: 3px solid var(--accent);
 }
 
+/* ── État vide ──────────────────────────────────────────────── */
 .table-empty td {
   text-align: center;
   color: var(--text-muted);
   padding: 32px 16px;
   font-size: 0.88rem;
+  background: transparent !important;
+  border-bottom: none;
 }
 
 .table-note {
@@ -979,89 +1062,117 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HERO TOTAL BLOCK
+   TOTAL RÉSULTAT — Bande télémétrie compacte
 ═══════════════════════════════════════════════════════════ */
 .total-hero {
-  margin-top: 48px;
-  padding: 48px 40px;
+  margin-top: 40px;
+  display: grid;
+  grid-template-areas:
+    "label    breakdown"
+    "amount   breakdown";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 32px;
+  padding: 18px 20px 18px 20px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  transition: background var(--transition), border-color var(--transition);
 }
 
 .total-hero-label {
+  grid-area: label;
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.18em;
   color: var(--text-faint);
-  margin-bottom: 12px;
+  margin-bottom: 3px;
 }
 
 .total-hero-amount {
+  grid-area: amount;
   font-family: var(--font-mono);
-  font-size: clamp(3rem, 9vw, 5.5rem);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 500;
   line-height: 1;
   color: var(--accent);
   letter-spacing: -0.02em;
+  white-space: nowrap;
   transition: color var(--transition);
 }
 
 .total-hero-breakdown {
+  grid-area: breakdown;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 12px 24px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-light);
+  gap: 4px 20px;
+  padding-left: 24px;
+  border-left: 1px solid var(--border-light);
+  min-height: 48px;
 }
 
 .total-hero-breakdown-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  text-align: center;
+  gap: 1px;
+  text-align: right;
 }
 
 .total-hero-breakdown-key {
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-faint);
 }
 
 .total-hero-breakdown-val {
   font-family: var(--font-mono);
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-muted);
+  white-space: nowrap;
   transition: color var(--transition);
 }
 
 .total-hero-breakdown-sep {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--border);
   line-height: 1;
-  padding-top: 18px;
+  align-self: center;
+  padding-top: 12px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 540px) {
   .total-hero {
-    padding: 36px 24px;
+    grid-template-areas:
+      "label"
+      "amount"
+      "breakdown";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    padding: 16px 18px;
+    column-gap: 0;
   }
   .total-hero-breakdown {
-    gap: 16px 16px;
+    padding-left: 0;
+    padding-top: 12px;
+    margin-top: 4px;
+    border-left: none;
+    border-top: 1px solid var(--border-light);
+    justify-content: flex-start;
+    min-height: auto;
+  }
+  .total-hero-breakdown-item {
+    text-align: left;
   }
 }
 
@@ -1464,8 +1575,13 @@ body {
 
 @media (max-width: 640px) {
   #landing {
-    padding: 80px 16px 60px;
-    gap: 40px;
+    padding: 24px 16px 40px;
+    gap: 32px;
+    align-items: flex-start;
+  }
+
+  .landing-content {
+    padding: 16px 0 24px;
   }
 
   .landing-pilots {
@@ -1495,25 +1611,91 @@ body {
     max-width: 100%;
   }
 
-  /* Tableau — masquer colonnes secondaires sur mobile */
-  /* Colonnes cachées : Description (2), Type (3), Gamme (5) */
-  /* Colonnes conservées : Poste (1), Montant (4)            */
-  #detail-table thead th:nth-child(2),
-  #detail-table tbody td:nth-child(2),
-  #detail-table thead th.col-type,
-  #detail-table tbody td:nth-child(3),
-  #detail-table thead th.col-gamme,
-  #detail-table tbody td:nth-child(5) {
+  /* ── Tableau mobile : 3 colonnes, portrait sans scroll horizontal ── */
+  /*
+   * Stratégie : on masque la colonne "Poste" et on réinjecte
+   * la catégorie comme micro-label CSS (::before + data-cat)
+   * dans la cellule Description. Le toggle est réduit au seul
+   * track pour gagner de la place. Résultat : 3 colonnes dans ~296px.
+   */
+
+  /* Annuler le min-width desktop */
+  #detail-table {
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Masquer la colonne Poste (intégrée dans Description via ::before) */
+  #detail-table thead th.th-poste,
+  #detail-table tbody td.td-category {
     display: none;
   }
 
-  #detail-table thead th {
-    white-space: normal;
-    padding: 6px 8px;
+  /* Catégorie réinjectée en micro-label au-dessus du texte */
+  #detail-table tbody td.td-desc::before {
+    content: attr(data-cat);
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+    line-height: 1.2;
+    margin-bottom: 3px;
   }
 
+  /* Description : alignement haut pour que le micro-label soit en tête */
+  #detail-table tbody td.td-desc {
+    vertical-align: top;
+    padding-top: 9px;
+    padding-left: 10px;
+    padding-right: 6px;
+  }
+
+  /* Supprimer le thumbnail sur mobile pour gagner de la place */
+  .td-thumb-wrap {
+    display: none;
+  }
+
+  .td-desc-inner {
+    display: block;
+  }
+
+  /* Padding général réduit */
+  #detail-table thead th,
   #detail-table td {
-    padding: 8px 8px;
+    padding: 7px 8px;
+  }
+
+  /* Montant : compact */
+  #detail-table td.col-amount {
+    font-size: 0.82rem;
+    width: 72px;
+    padding-left: 4px;
+    padding-right: 8px;
+  }
+
+  /* Toggle maintenant dans la cellule Description — track plus grand pour le tactile */
+  .gamme-switch-track {
+    width: 32px;
+    height: 18px;
+  }
+
+  .gamme-switch-knob {
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+  }
+
+  .gamme-switch--on .gamme-switch-knob {
+    transform: translateX(14px);
+  }
+
+  /* Pas besoin du scroll shadow sur mobile (plus de scroll horizontal) */
+  .detail-table-wrapper {
+    background: var(--surface);
   }
 
   .detail-fullwidth-inner {

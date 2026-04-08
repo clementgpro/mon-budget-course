@@ -358,6 +358,40 @@ const PRICE_HINT_MAP = {
   outils:      { gammeKey: 'outils_gamme',      eco: 'outils_basic',      premium: 'outils_premium' },
 };
 
+// ── Images produit (OG via microlink.io) ─────────────────────
+const IMAGE_CACHE = {};
+
+const CATEGORY_ICONS = {
+  'Matériel':      '🔧',
+  'Équipement':    '🛡️',
+  'Logistique':    '🚐',
+  'Services':      '⚙️',
+  'Administratif': '📋',
+  'Course':        '🏁',
+  'Hébergement':   '🏨',
+  'Loisir':        '🎮',
+};
+
+async function fetchProductImage(url) {
+  if (url in IMAGE_CACHE) return IMAGE_CACHE[url];
+  const cacheKey = 'thumb_' + url.slice(-40).replace(/\W/g, '_');
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached !== null) { IMAGE_CACHE[url] = cached || null; return IMAGE_CACHE[url]; }
+  try {
+    const res = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(url)}`);
+    if (!res.ok) throw new Error('api');
+    const json = await res.json();
+    const imgUrl = json?.data?.image?.url || null;
+    IMAGE_CACHE[url] = imgUrl;
+    sessionStorage.setItem(cacheKey, imgUrl || '');
+    return imgUrl;
+  } catch {
+    IMAGE_CACHE[url] = null;
+    sessionStorage.setItem(cacheKey, '');
+    return null;
+  }
+}
+
 // ── Helpers d'accès à l'état ─────────────────────────────────
 
 /** Vérifie si une pratique est sélectionnée (checkbox = array) */
@@ -969,7 +1003,7 @@ function renderTable(invest, annual, fmt) {
   if (invest.length === 0 && annual.length === 0) {
     const tr = document.createElement('tr');
     tr.className = 'table-empty';
-    tr.innerHTML = '<td colspan="5">Répondez aux questions pour voir le détail des dépenses.</td>';
+    tr.innerHTML = '<td colspan="3">Répondez aux questions pour voir le détail des dépenses.</td>';
     tbody.appendChild(tr);
     return;
   }
@@ -977,7 +1011,7 @@ function renderTable(invest, annual, fmt) {
   const addSectionHeader = (label) => {
     const tr = document.createElement('tr');
     tr.className = 'section-header';
-    tr.innerHTML = `<td colspan="5">${label}</td>`;
+    tr.innerHTML = `<td colspan="3">${label}</td>`;
     tbody.appendChild(tr);
   };
 
@@ -992,22 +1026,42 @@ function renderTable(invest, annual, fmt) {
       ? ` <small style="color:var(--text-faint)">× ${item.multiplier}</small>`
       : '';
     const sourceHtml = item.source && item.source.startsWith('http')
-      ? `<a href="${escapeHtml(item.source)}" target="_blank" rel="noopener noreferrer" style="color:var(--text-faint);font-size:.75rem">↗ source</a>`
-      : (item.source ? `<span style="color:var(--text-faint);font-size:.75rem">${escapeHtml(item.source)}</span>` : '');
+      ? `<a href="${escapeHtml(item.source)}" target="_blank" rel="noopener noreferrer" class="td-source-link">↗ source</a>`
+      : (item.source ? `<span class="td-source-text">${escapeHtml(item.source)}</span>` : '');
 
-    const badgeClass = item.isOneTime ? 'td-type-badge badge-invest' : 'td-type-badge';
-    const typeLabel  = item.isOneTime ? 'Initial' : 'Annuel';
+    const hasUrl = item.source && item.source.startsWith('http');
+    const catIcon = CATEGORY_ICONS[item.category] || '📦';
 
     tr.innerHTML = `
       <td class="td-category">${escapeHtml(item.category)}</td>
-      <td class="td-desc">
-        ${escapeHtml(item.label)}${multiplierInfo}
-        ${sourceHtml ? `<br>${sourceHtml}` : ''}
+      <td class="td-desc" data-cat="${escapeHtml(item.category)}">
+        <div class="td-desc-inner">
+          <div class="td-thumb-wrap">
+            <div class="td-thumb-placeholder">${catIcon}</div>
+          </div>
+          <div class="td-desc-text">
+            ${escapeHtml(item.label)}${multiplierInfo}
+            ${sourceHtml ? `<br>${sourceHtml}` : ''}
+          </div>
+        </div>
       </td>
-      <td class="col-type"><span class="${badgeClass}">${typeLabel}</span></td>
       <td class="col-amount td-amount">${fmt(item.montant)}</td>
-      <td class="col-gamme"></td>
     `;
+
+    if (hasUrl) {
+      const thumbWrap = tr.querySelector('.td-thumb-wrap');
+      fetchProductImage(item.source).then(imgUrl => {
+        if (imgUrl && thumbWrap) {
+          const img = document.createElement('img');
+          img.className = 'td-thumb';
+          img.alt = item.label;
+          img.src = imgUrl;
+          img.onload = () => img.classList.add('loaded');
+          img.onerror = () => img.remove();
+          thumbWrap.appendChild(img);
+        }
+      });
+    }
 
     // Switch éco/premium pour les items applicables
     const hintKey = item.ruleKey.startsWith('achat_') ? item.ruleKey.slice(6) : null;
@@ -1028,7 +1082,7 @@ function renderTable(invest, annual, fmt) {
         state.answers[hints.gammeKey] = cur === 'premium' ? 'economique' : 'premium';
         calculateAndRender();
       });
-      tr.querySelector('.col-gamme').appendChild(switchBtn);
+      tr.querySelector('.td-desc-text').appendChild(switchBtn);
     }
 
     tbody.appendChild(tr);
@@ -1105,6 +1159,20 @@ function buildContinueBtn(q) {
   btn.addEventListener('click', () => {
     state.touchedIds.add(q.id);
     updateReveal();
+    // Scroll vers la prochaine question ou le bouton calculer
+    setTimeout(() => {
+      const visible = getVisibleQuestions();
+      const idx = visible.findIndex(vq => vq.id === q.id);
+      if (idx !== -1 && idx < visible.length - 1) {
+        const nextCard = document.getElementById(`card-${visible[idx + 1].id}`);
+        if (nextCard) {
+          nextCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+      }
+      const calcWrap = document.getElementById('calculate-wrap');
+      if (calcWrap) calcWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 150);
   });
   return btn;
 }

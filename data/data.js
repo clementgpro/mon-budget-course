@@ -658,7 +658,7 @@ window.QUESTIONS_DATA = [
   {
     id: "revision_moteur",
     label: "Prévois-tu une révision moteur cette année ?",
-    hint: "Révision annuelle complète recommandée en compétition (~990 €).",
+    hint: "Révision annuelle complète recommandée en compétition.",
     type: "radio",
     options: [
       { value: "oui", label: "Oui" },
@@ -691,7 +691,7 @@ window.QUESTIONS_DATA = [
     hint: null,
     type: "radio",
     options: [
-      { value: "location", label: "Location de véhicule (~150 €/WE)" },
+      { value: "location", label: "Location de véhicule" },
       { value: "remorque",  label: "Achat remorque" },
       { value: "plateau",   label: "Achat plateau" },
       { value: "deja",      label: "J'ai déjà ce qu'il faut" }
@@ -825,7 +825,7 @@ window.QUESTIONS_DATA = [
     options: [
       { value: "moi",  label: "Je fais tout moi-même" },
       { value: "ami",  label: "J'ai un ami mécano (bénévole)" },
-      { value: "pro",  label: "Je paie un mécanicien officiel (150 €/jour)" }
+      { value: "pro",  label: "Je paie un mécanicien officiel" }
     ],
     condition: "pratique=competition",
     prefill: null,
@@ -838,7 +838,7 @@ window.QUESTIONS_DATA = [
     hint: null,
     type: "radio",
     options: [
-      { value: "hotel",   label: "Oui, à l'hôtel (~80 €/nuit)" },
+      { value: "hotel",   label: "Oui, à l'hôtel" },
       { value: "paddock", label: "Je dors dans le paddock (camion / tente)" },
       { value: "maison",  label: "Non, je rentre chez moi" }
     ],
